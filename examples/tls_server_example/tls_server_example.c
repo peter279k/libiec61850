@@ -109,6 +109,7 @@ main(int argc, char** argv)
         port_number = argv[1];
 
     printf("Using libIEC61850 version %s\n", LibIEC61850_getVersionString());
+    printf("libIEC61850 IedServer server will listen on %d\n", port_number);
 
     TLSConfiguration tlsConfig = TLSConfiguration_create();
 
