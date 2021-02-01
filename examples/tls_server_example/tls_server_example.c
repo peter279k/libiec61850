@@ -176,8 +176,7 @@ main(int argc, char** argv)
     iedServer = IedServer_createWithTlsSupport(&iedModel, tlsConfig);
 
     // Install writer handler
-    IedServer_handleWriteAccess(iedServer, IEDMODEL_GenericIO_GGIO1_NamPlt_vendor,
-       writeAccessHandler);
+    IedServer_handleWriteAccess(iedServer, IEDMODEL_GenericIO_GGIO1_NamPlt_vendor, writeAccessHandler);
 
     IedServer_setAuthenticator(iedServer, clientAuthenticator, NULL);
 
