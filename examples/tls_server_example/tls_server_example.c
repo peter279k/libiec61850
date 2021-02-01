@@ -190,7 +190,7 @@ main(int argc, char** argv)
      * so we install a write access handler to change the control model when the client
      * writes to the "ctlModel" attribute.
      */
-     IedServer_handleWriteAccess(iedServer, IEDMODEL_GenericIO_GGIO1_SPCSO1_ctlModel, writeAccessHandler, NULL);
+    IedServer_handleWriteAccess(iedServer, IEDMODEL_GenericIO_GGIO1_SPCSO1_ctlModel, writeAccessHandler, NULL);
 
     /* MMS server will be instructed to start listening to client connections. */
     IedServer_start(iedServer, port_number);
