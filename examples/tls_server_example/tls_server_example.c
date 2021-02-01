@@ -25,12 +25,12 @@ sigint_handler(int signalId)
     running = 0;
 }
 
-static bool
+static MmsDataAccessError
 writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnection connection)
 {
     printf("New visible string value for OutVarSet_setMag_f = %s\n",
         MmsValue_toString(value));
-    return true;
+    return DATA_ACCESS_ERROR_SUCCESS;
 }
 
 static ControlHandlerResult
