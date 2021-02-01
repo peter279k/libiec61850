@@ -26,7 +26,7 @@ sigint_handler(int signalId)
 }
 
 static MmsDataAccessError
-writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnection connection)
+writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnection connection, void* parameter)
 {
     printf("New visible string value for OutVarSet_setMag_f = %s\n",
         MmsValue_toString(value));
@@ -176,7 +176,7 @@ main(int argc, char** argv)
     iedServer = IedServer_createWithTlsSupport(&iedModel, tlsConfig);
 
     // Install writer handler
-    IedServer_handleWriteAccess(iedServer, IEDMODEL_GenericIO_GGIO1_NamPlt_vendor, writeAccessHandler);
+    IedServer_handleWriteAccess(iedServer, IEDMODEL_GenericIO_GGIO1_NamPlt_vendor, writeAccessHandler, NULL);
 
     IedServer_setAuthenticator(iedServer, clientAuthenticator, NULL);
 
