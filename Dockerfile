@@ -38,8 +38,8 @@ RUN apt-get update \
 && apt-get clean \
 && apt-get purge -y wget git unzip build-essential cmake \
 && apt-get autoremove -y \
-&& mv ./libiec61850/examples/iec61850_client_example1/ /home/iec61850/ \
-&& mv ./libiec61850/examples/server_example_write_handler/ /home/iec61850/ \
+&& mv ./libiec61850/examples/no_tls_server_example/ /home/iec61850/ \
+&& mv ./libiec61850/examples/no_tls_client_example/ /home/iec61850/ \
 && mv ./libiec61850/examples/tls_server_example/ /home/iec61850/ \
 && mv ./libiec61850/examples/tls_client_example/ /home/iec61850/ \
 && chown -R iec61850:iec61850 /home/iec61850/ \
