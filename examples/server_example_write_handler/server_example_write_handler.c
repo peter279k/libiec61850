@@ -24,7 +24,7 @@ void sigint_handler(int signalId)
 static MmsDataAccessError
 writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnection connection, void* parameter)
 {
-    if (dataAttribute == IEDMODEL_GenericIO_GGIO1_NamPlt_vendor) {
+    if (dataAttribute == IEDMODEL_Inverter_ZINV1_OutVarSet_setMag_f) {
         char newValue[] = MmsValue_toString(value);
         printf("New value for OutVarSet_setMag_f = %s\n", newValue);
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
 	/* Instruct the server that we will be informed if a clients writes to a
 	 * certain variables we are interested in.
 	 */
-	IedServer_handleWriteAccess(iedServer, IEDMODEL_GenericIO_GGIO1_NamPlt_vendor, writeAccessHandler, NULL);
+	IedServer_handleWriteAccess(iedServer, IEDMODEL_Inverter_ZINV1_OutVarSet_setMag_f, writeAccessHandler, NULL);
 
 	if (!IedServer_isRunning(iedServer)) {
 		printf("Starting server failed! Exit.\n");
