@@ -25,7 +25,7 @@ static MmsDataAccessError
 writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnection connection, void* parameter)
 {
     if (dataAttribute == IEDMODEL_Inverter_ZINV1_OutVarSet_setMag_f) {
-        char newValue[] = MmsValue_toString(value);
+        char* newValue = MmsValue_toString(value);
         printf("New value for OutVarSet_setMag_f = %s\n", newValue);
 
         return DATA_ACCESS_ERROR_SUCCESS;
