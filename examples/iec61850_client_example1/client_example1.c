@@ -50,28 +50,12 @@ int main(int argc, char** argv) {
 
     if (error == IED_ERROR_OK) {
 
-        /* read an analog measurement value from server */
-        MmsValue* value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn1.mag.f", IEC61850_FC_MX);
-
-        if (value != NULL) {
-
-            if (MmsValue_getType(value) == MMS_FLOAT) {
-                float fval = MmsValue_toFloat(value);
-                printf("read float value: %f\n", fval);
-            }
-            else if (MmsValue_getType(value) == MMS_DATA_ACCESS_ERROR) {
-                printf("Failed to read value (error code: %i)\n", MmsValue_getDataAccessError(value));
-            }
-
-            MmsValue_delete(value);
-        }
-
         /* write a variable to the server */
         value = MmsValue_newVisibleString("libiec61850_itri_non_tls");
-        IedConnection_writeObject(con, &error, "simpleIOGenericIO/GGIO1.NamPlt.vendor", IEC61850_FC_DC, value);
+        IedConnection_writeObject(con, &error, "simpleIOInverter/ZINV1.OutVarSet.setMag.f", IEC61850_FC_DC, value);
 
         if (error != IED_ERROR_OK)
-            printf("failed to write simpleIOGenericIO/GGIO1.NamPlt.vendor! (error code: %i)\n", error);
+            printf("failed to write simpleIOInverter/ZINV1.OutVarSet.setMag.f! (error code: %i)\n", error);
 
         MmsValue_delete(value);
 
