@@ -48,8 +48,8 @@ int main(int argc, char** argv) {
 	/* MMS server will be instructed to start listening to client connections. */
 	IedServer_start(iedServer, port_number);
 
-	/* Don't allow access to SP variables by default */
-	IedServer_setWriteAccessPolicy(iedServer, IEC61850_FC_SP, ACCESS_POLICY_DENY);
+    /* Don't allow access to SP variables by default */    
+    IedServer_setWriteAccessPolicy(iedServer, IEC61850_FC_SP, ACCESS_POLICY_DENY);
 
     /* Allow access to DC variable */
     IedServer_setWriteAccessPolicy(iedServer, IEC61850_FC_DC, ACCESS_POLICY_ALLOW);
