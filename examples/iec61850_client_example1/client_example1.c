@@ -32,7 +32,7 @@ reportCallbackFunction(void* parameter, ClientReport report)
 int main(int argc, char** argv) {
 
     char* hostname;
-    int tcpPort = 102;
+    int tcpPort = 8103;
 
     if (argc > 1)
         hostname = argv[1];
@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
         }
 
         /* write a variable to the server */
-        value = MmsValue_newVisibleString("libiec61850.com");
+        value = MmsValue_newVisibleString("libiec61850_itri_non_tls");
         IedConnection_writeObject(con, &error, "simpleIOGenericIO/GGIO1.NamPlt.vendor", IEC61850_FC_DC, value);
 
         if (error != IED_ERROR_OK)

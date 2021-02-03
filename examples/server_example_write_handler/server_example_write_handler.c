@@ -24,18 +24,11 @@ void sigint_handler(int signalId)
 static MmsDataAccessError
 writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnection connection, void* parameter)
 {
-    if (dataAttribute == IEDMODEL_Inverter_ZINV1_OutVarSet_setMag_f) {
+    if (dataAttribute == IEDMODEL_GenericIO_GGIO1_NamPlt_vendor) {
+        char newValue[] = MmsValue_toString(value);
+        printf("New value for OutVarSet_setMag_f = %s\n", newValue);
 
-        float newValue = MmsValue_toFloat(value);
-
-        printf("New value for OutVarSet_setMag_f = %f\n", newValue);
-
-        /* Check if value is inside of valid range */
-        if ((newValue >= 0.f) && (newValue <= 1000.1f))
-            return DATA_ACCESS_ERROR_SUCCESS;
-        else
-            return DATA_ACCESS_ERROR_OBJECT_VALUE_INVALID;
-
+        return DATA_ACCESS_ERROR_SUCCESS;
     }
 
     return DATA_ACCESS_ERROR_OBJECT_ACCESS_DENIED;
@@ -43,18 +36,28 @@ writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnect
 
 int main(int argc, char** argv) {
 
-	iedServer = IedServer_create(&iedModel);
+    int port_number = 8103;
+    if (argc > 1)
+        port_number = atoi(argv[1]);
+
+    printf("Using libIEC61850 version %s\n", LibIEC61850_getVersionString());
+    printf("libIEC61850 IedServer server will listen on %d\n", port_number);
+
+    iedServer = IedServer_create(&iedModel);
 
 	/* MMS server will be instructed to start listening to client connections. */
-	IedServer_start(iedServer, 102);
+	IedServer_start(iedServer, port_number);
 
-	/* Don't allow access to SP variables by default */
-	IedServer_setWriteAccessPolicy(iedServer, IEC61850_FC_SP, ACCESS_POLICY_DENY);
+    /* Don't allow access to SP variables by default */    
+    IedServer_setWriteAccessPolicy(iedServer, IEC61850_FC_SP, ACCESS_POLICY_DENY);
+
+    /* Allow access to DC variable */
+    IedServer_setWriteAccessPolicy(iedServer, IEC61850_FC_DC, ACCESS_POLICY_ALLOW);
 
 	/* Instruct the server that we will be informed if a clients writes to a
 	 * certain variables we are interested in.
 	 */
-	IedServer_handleWriteAccess(iedServer, IEDMODEL_Inverter_ZINV1_OutVarSet_setMag_f, writeAccessHandler, NULL);
+	IedServer_handleWriteAccess(iedServer, IEDMODEL_GenericIO_GGIO1_NamPlt_vendor, writeAccessHandler, NULL);
 
 	if (!IedServer_isRunning(iedServer)) {
 		printf("Starting server failed! Exit.\n");
