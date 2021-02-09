@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "hal_thread.h"
 
@@ -42,8 +43,8 @@ int create_sqlite3_table() {
         return 1;
     }
 
-    char *sql = "CREATE TABLE IF NOT EXISTS reading_value(id INT PRIMARY KEY, value TEXT, date_time TEXT);"
-                "CREATE TABLE IF NOT EXISTS writing_data_attribute(id INT PRIMARY KEY, attribute TEXT, date_time TEXT);";
+    char *sql = "CREATE TABLE IF NOT EXISTS reading_value(id INT PRIMARY KEY AUTOINCREMENT, value TEXT, date_time TEXT);"
+                "CREATE TABLE IF NOT EXISTS writing_data_attribute(id INT PRIMARY KEY AUTOINCREMENT, attribute TEXT, date_time TEXT);";
     rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", err_msg);
@@ -56,6 +57,49 @@ int create_sqlite3_table() {
     sqlite3_close(db);
 
     return 0;
+}
+
+int insert_writing_attr(char* insert_sql) {
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc = sqlite3_open_v2("/home/iec61850/databases/libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+
+        return 1;
+    }
+
+    rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+    if (rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);
+        sqlite3_close(db);
+        return 1;
+    }
+
+    sqlite3_close(db);
+
+    return 0;
+}
+
+char* get_current_datetime() {
+    int hours, minutes, seconds, day, month, year;
+    char* datetime_str;
+    time_t now;
+    time(&now);
+    struct tm *local = localtime(&now);
+    hours = local->tm_hour - 12;
+    minutes = local->tm_min;
+    seconds = local->tm_sec;
+
+    day = local->tm_mday;
+    month = local->tm_mon + 1;
+    year = local->tm_year + 1900;
+
+    sprintf(datetime_str, "%02d-%02d-%d %02d:%02d:%02d", year, month, day, hours, minutes, seconds);
+
+    return datetime_str;
 }
 
 int main(int argc, char** argv) {
@@ -115,6 +159,12 @@ int main(int argc, char** argv) {
         if (error != IED_ERROR_OK) {
             printf("Error code=%d", error);
             printf("failed to write simpleIOGenericIO/GGIO1.NamPlt.vendor!\n");
+        } else {
+            printf("Writing data attribute to server has been successful!\n");
+            printf("Trying to insert data attribute to SQLite writing_data_attribute table...\n");
+            char* insert_sql;
+            sprintf(insert_sql, "INSERT INTO writing_data_attribute(attribute, date_time) VALUES('%s', '%s');", attribute_string, get_current_datetime());
+            insert_writing_attr(insert_sql);
         }
 
         MmsValue_delete(value);
