@@ -176,6 +176,7 @@ int main(int argc, char** argv) {
             float fval = MmsValue_toFloat(value);
             printf("read float value: %f\n", fval);
             printf("Try to store reading value...\n");
+            printf("Today date time is: %s", get_current_datetime());
             char *insert_reading_sql;
             sprintf(insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%f', '%s');", fval, get_current_datetime());
             printf("%s\n", insert_reading_sql);
