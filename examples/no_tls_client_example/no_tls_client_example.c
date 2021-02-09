@@ -59,7 +59,7 @@ int create_sqlite3_table() {
     return 0;
 }
 
-int insert_reading_value(char insert_reading_sql[]) {
+int insert_reading_value(char *insert_reading_sql) {
     sqlite3 *db;
     char *err_msg = 0;
     int rc = sqlite3_open_v2("/home/iec61850/databases/libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
@@ -108,13 +108,14 @@ int insert_writing_attr(char insert_attr_sql[]) {
     return 0;
 }
 
-char get_current_datetime() {
+char *get_current_datetime() {
     int hours, minutes, seconds, day, month, year;
-    char datetime_str[50];
+    char *datetime_str;
     time_t now;
     time(&now);
     struct tm *local = localtime(&now);
-    hours = local->tm_hour - 12;
+    hours = local->tm_hour;
+    hours = hours - 12;
     minutes = local->tm_min;
     seconds = local->tm_sec;
 
@@ -175,8 +176,9 @@ int main(int argc, char** argv) {
             float fval = MmsValue_toFloat(value);
             printf("read float value: %f\n", fval);
             printf("Try to store reading value...\n");
-            char insert_reading_sql[100];
+            char *insert_reading_sql;
             sprintf(insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%f', '%s');", fval, get_current_datetime());
+            printf("%s\n", insert_reading_sql);
             insert_reading_value(insert_reading_sql);
             MmsValue_delete(value);
         }
@@ -191,7 +193,7 @@ int main(int argc, char** argv) {
         } else {
             printf("Writing data attribute to server has been successful!\n");
             printf("Trying to insert data attribute to SQLite writing_data_attribute table...\n");
-            char insert_attr_sql[100];
+            char *insert_attr_sql;
             sprintf(insert_attr_sql, "INSERT INTO writing_data_attribute(attribute, date_time) VALUES('%s', '%s');", attribute_string, get_current_datetime());
             insert_writing_attr(insert_attr_sql);
         }
