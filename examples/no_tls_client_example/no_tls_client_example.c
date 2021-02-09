@@ -108,7 +108,7 @@ int insert_writing_attr(char insert_attr_sql[]) {
     return 0;
 }
 
-char *get_current_datetime() {
+void get_current_datetime() {
     int hours, minutes, seconds, day, month, year;
     char *datetime_str;
     time_t now;
@@ -123,9 +123,9 @@ char *get_current_datetime() {
     month = local->tm_mon + 1;
     year = local->tm_year + 1900;
 
-    sprintf(datetime_str, "%02d-%02d-%d %02d:%02d:%02d", year, month, day, hours, minutes, seconds);
+    printf("%02d-%02d-%d %02d:%02d:%02d", year, month, day, hours, minutes, seconds);
 
-    return datetime_str;
+//    return datetime_str;
 }
 
 int main(int argc, char** argv) {
@@ -177,6 +177,7 @@ int main(int argc, char** argv) {
             printf("read float value: %f\n", fval);
             printf("Try to store reading value...\n");
             printf("Today date time is: %s", get_current_datetime());
+            return 0;
             char *insert_reading_sql;
             sprintf(insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%f', '%s');", fval, get_current_datetime());
             printf("%s\n", insert_reading_sql);
