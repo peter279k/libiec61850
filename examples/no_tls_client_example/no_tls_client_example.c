@@ -34,7 +34,7 @@ reportCallbackFunction(void* parameter, ClientReport report)
 int create_sqlite3_table() {
     sqlite3 *db;
     char *err_msg = 0;
-    int rc = sqlite3_open("/home/iec61850/libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    int rc = sqlite3_open_v2("/home/iec61850/libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
