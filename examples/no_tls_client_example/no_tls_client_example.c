@@ -108,9 +108,9 @@ int insert_writing_attr(char insert_attr_sql[]) {
     return 0;
 }
 
-char* get_current_datetime() {
+char get_current_datetime() {
     int hours, minutes, seconds, day, month, year;
-    char* datetime_str;
+    char datetime_str[50];
     time_t now;
     time(&now);
     struct tm *local = localtime(&now);
