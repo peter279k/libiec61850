@@ -11,6 +11,8 @@
 
 #include "hal_thread.h"
 
+#include "sqlite3.h"
+
 void
 reportCallbackFunction(void* parameter, ClientReport report)
 {
@@ -30,6 +32,8 @@ reportCallbackFunction(void* parameter, ClientReport report)
 }
 
 int main(int argc, char** argv) {
+
+    printf("SQLite3 version is: %s\n", sqlite3_libversion());
 
     char* hostname;
     int port_number = -1;
