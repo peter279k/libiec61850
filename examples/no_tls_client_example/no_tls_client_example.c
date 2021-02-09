@@ -42,9 +42,8 @@ int create_sqlite3_table() {
         return 1;
     }
 
-    char *sql = "CREATE TABLE IF EXISTS Cars(Id INT, Name TEXT, Price INT);"
-                "CREATE TABLE reading_value(Id INT, Value TEXT, Date TEXT);"
-                "CREATE TABLE writing_data_attribute(Id INT, Attribute TEXT, Date TEXT);";
+    char *sql = "CREATE TABLE IF NOT EXISTS reading_value(id INT PRIMARY KEY, value TEXT, date_time TEXT);"
+                "CREATE TABLE IF NOT EXISTS writing_data_attribute(id INT PRIMARY KEY, attribute TEXT, date_time TEXT);";
     rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", err_msg);
@@ -65,7 +64,7 @@ int main(int argc, char** argv) {
     printf("Creating SQLite3 reading_value and writing_data_attribute tables....\n");
     int table_result = create_sqlite3_table();
     if (table_result != 0) {
-        printf("Creating Table has been failed!");
+        printf("Creating Table has been failed!\n");
         return 1;
     }
 
