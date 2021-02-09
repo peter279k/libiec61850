@@ -27,3 +27,9 @@ add_executable(no_tls_client_example
 target_link_libraries(no_tls_client_example
     iec61850
 )
+
+ELSE()
+
+message("no_tls_client_example: sqlite3 library not found")
+
+ENDIF()
