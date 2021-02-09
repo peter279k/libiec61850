@@ -179,7 +179,6 @@ int main(int argc, char** argv) {
             get_current_datetime();
             return 0;
             char *insert_reading_sql;
-            sprintf(insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%f', '%s');", fval, get_current_datetime());
             printf("%s\n", insert_reading_sql);
             insert_reading_value(insert_reading_sql);
             MmsValue_delete(value);
@@ -196,7 +195,6 @@ int main(int argc, char** argv) {
             printf("Writing data attribute to server has been successful!\n");
             printf("Trying to insert data attribute to SQLite writing_data_attribute table...\n");
             char *insert_attr_sql;
-            sprintf(insert_attr_sql, "INSERT INTO writing_data_attribute(attribute, date_time) VALUES('%s', '%s');", attribute_string, get_current_datetime());
             insert_writing_attr(insert_attr_sql);
         }
 
