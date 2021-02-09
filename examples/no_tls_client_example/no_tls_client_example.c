@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
     if (argc > 3) {
         hostname = argv[1];
         port_number = atoi(argv[2]);
-        attribute_string = atoi(argv[3]);
+        attribute_string = argv[3];
     }
     else {
         hostname = "localhost";
