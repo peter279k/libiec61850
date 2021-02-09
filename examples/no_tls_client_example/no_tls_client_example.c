@@ -31,19 +31,58 @@ reportCallbackFunction(void* parameter, ClientReport report)
     }
 }
 
+int create_sqlite3_table() {
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc = sqlite3_open("/home/iec61850/libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+
+        return 1;
+    }
+
+    char *sql = "CREATE TABLE IF EXISTS Cars(Id INT, Name TEXT, Price INT);"
+                "CREATE TABLE reading_value(Id INT, Value TEXT, Date TEXT);"
+                "CREATE TABLE writing_data_attribute(Id INT, Attribute TEXT, Date TEXT);";
+    rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);
+        sqlite3_close(db);
+
+        return 1;
+    }
+
+    sqlite3_close(db);
+
+    return 0;
+}
+
 int main(int argc, char** argv) {
 
     printf("SQLite3 version is: %s\n", sqlite3_libversion());
+    printf("Creating SQLite3 reading_value and writing_data_attribute tables....\n");
+    int table_result = create_sqlite3_table();
+    if (table_result != 0) {
+        printf("Creating Table has been failed!");
+        return 1;
+    }
 
     char* hostname;
+    char* attribute_string;
     int port_number = -1;
 
-    if (argc > 2) {
+    if (argc > 3) {
         hostname = argv[1];
         port_number = atoi(argv[2]);
+        attribute_string = atoi(argv[3]);
     }
-    else
+    else {
         hostname = "localhost";
+        port_number = "8103";
+        attribute_string = "libiec61850_itri_no_tls";
+    }
 
     IedClientError error;
 
@@ -71,7 +110,7 @@ int main(int argc, char** argv) {
         }
 
         /* write a variable to the server */
-        value = MmsValue_newVisibleString("libiec61850_itri_no_tls");
+        value = MmsValue_newVisibleString(attribute_string);
         IedConnection_writeObject(con, &error, "simpleIOGenericIO/GGIO1.NamPlt.vendor", IEC61850_FC_DC, value);
 
         if (error != IED_ERROR_OK) {
