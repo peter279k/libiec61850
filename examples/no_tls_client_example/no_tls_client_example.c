@@ -123,7 +123,8 @@ void get_current_datetime() {
     month = local->tm_mon + 1;
     year = local->tm_year + 1900;
 
-    printf("%02d-%02d-%d %02d:%02d:%02d", year, month, day, hours, minutes, seconds);
+    sprintf(datetime_str, "%02d-%02d-%0d %02d:%02d:%02d", year, month, day, hours, minutes, seconds);
+    printf("%s\n", datetime_str);
 
 //    return datetime_str;
 }
