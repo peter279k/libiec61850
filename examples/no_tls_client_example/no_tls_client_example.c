@@ -43,8 +43,8 @@ int create_sqlite3_table() {
         return 1;
     }
 
-    char *sql = "CREATE TABLE IF NOT EXISTS reading_value(id INT PRIMARY KEY AUTOINCREMENT, value TEXT, date_time TEXT);"
-                "CREATE TABLE IF NOT EXISTS writing_data_attribute(id INT PRIMARY KEY AUTOINCREMENT, attribute TEXT, date_time TEXT);";
+    char *sql = "CREATE TABLE IF NOT EXISTS reading_value(id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT, date_time TEXT);"
+                "CREATE TABLE IF NOT EXISTS writing_data_attribute(id INTEGER PRIMARY KEY AUTOINCREMENT, attribute TEXT, date_time TEXT);";
     rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", err_msg);
