@@ -124,7 +124,6 @@ char* get_current_datetime() {
     year = local->tm_year + 1900;
 
     asprintf(&datetime_str, "%02d-%02d-%0d %02d:%02d:%02d", year, month, day, hours, minutes, seconds);
-    printf("%s\n", datetime_str);
 
     return datetime_str;
 }
@@ -178,9 +177,11 @@ int main(int argc, char** argv) {
             printf("read float value: %f\n", fval);
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
-            return 0;
+
             char *insert_reading_sql;
-            printf("%s\n", insert_reading_sql);
+            char fval_str[100];
+            gcvt(fval, 6, fval_str);
+            asprintf(&insert_reading_sql, "INSERT INTO reading_value VALUES('%s', %s);", fval_str, get_current_datetime());
             insert_reading_value(insert_reading_sql);
             MmsValue_delete(value);
         }
@@ -196,6 +197,7 @@ int main(int argc, char** argv) {
             printf("Writing data attribute to server has been successful!\n");
             printf("Trying to insert data attribute to SQLite writing_data_attribute table...\n");
             char *insert_attr_sql;
+            asprintf(&insert_attr_sql, "INSERT INTO writing_data_attribute VALUES('%s', %s);", attribute_string, get_current_datetime());
             insert_writing_attr(insert_attr_sql);
         }
 
