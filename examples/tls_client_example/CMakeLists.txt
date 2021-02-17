@@ -15,6 +15,8 @@ set(sqlite_SRCS
    ${CMAKE_CURRENT_LIST_DIR}/../../third_party/sqlite/sqlite3.c
 )
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_LOAD_EXTENSION")
+
 IF(MSVC)
 set_source_files_properties(${example_SRCS}
                                        PROPERTIES LANGUAGE CXX)
@@ -35,6 +37,6 @@ target_link_libraries(tls_client_example
 
 ELSE()
 
-message("no_tls_client_example: sqlite3 library not found")
+message("tls_client_example: sqlite3 library not found")
 
 ENDIF()
