@@ -181,7 +181,7 @@ int main(int argc, char** argv) {
             char *insert_reading_sql;
             char fval_str[100];
             gcvt(fval, 6, fval_str);
-            asprintf(&insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%s', %s);", fval_str, get_current_datetime());
+            asprintf(&insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%s', '%s');", fval_str, get_current_datetime());
             insert_reading_value(insert_reading_sql);
             MmsValue_delete(value);
         }
@@ -197,7 +197,7 @@ int main(int argc, char** argv) {
             printf("Writing data attribute to server has been successful!\n");
             printf("Trying to insert data attribute to SQLite writing_data_attribute table...\n");
             char *insert_attr_sql;
-            asprintf(&insert_attr_sql, "INSERT INTO writing_data_attribute(attribute, date_time) VALUES('%s', %s);", attribute_string, get_current_datetime());
+            asprintf(&insert_attr_sql, "INSERT INTO writing_data_attribute(attribute, date_time) VALUES('%s', '%s');", attribute_string, get_current_datetime());
             insert_writing_attr(insert_attr_sql);
         }
 
