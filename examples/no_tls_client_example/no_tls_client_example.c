@@ -149,7 +149,7 @@ int main(int argc, char** argv) {
     }
     else {
         hostname = "localhost";
-        port_number = "8103";
+        port_number = 8103;
         attribute_string = "libiec61850_itri_no_tls";
     }
 
