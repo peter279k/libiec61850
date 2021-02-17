@@ -60,7 +60,7 @@ int create_sqlite3_table() {
 int insert_reading_value(char *insert_reading_sql) {
     sqlite3 *db;
     char *err_msg = 0;
-    int rc = sqlite3_open_v2("/home/iec61850/databases/libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    int rc = sqlite3_open_v2("/home/iec61850/databases/tls_libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
@@ -84,7 +84,7 @@ int insert_reading_value(char *insert_reading_sql) {
 int insert_writing_attr(char insert_attr_sql[]) {
     sqlite3 *db;
     char *err_msg = 0;
-    int rc = sqlite3_open_v2("/home/iec61850/databases/libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    int rc = sqlite3_open_v2("/home/iec61850/databases/tls_libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
