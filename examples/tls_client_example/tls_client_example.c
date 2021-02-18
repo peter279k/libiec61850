@@ -8,8 +8,11 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "hal_thread.h"
+
+#include "sqlite3.h"
 
 void
 reportCallbackFunction(void* parameter, ClientReport report)
@@ -29,17 +32,123 @@ reportCallbackFunction(void* parameter, ClientReport report)
     }
 }
 
+int create_sqlite3_table() {
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc = sqlite3_open_v2("/home/iec61850/databases/tls_libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+        return 1;
+    }
+
+    char *sql = "CREATE TABLE IF NOT EXISTS reading_value(id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT, date_time TEXT);"
+                "CREATE TABLE IF NOT EXISTS writing_data_attribute(id INTEGER PRIMARY KEY AUTOINCREMENT, attribute TEXT, date_time TEXT);";
+    rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);
+        sqlite3_close(db);
+
+        return 1;
+    }
+
+    sqlite3_close(db);
+    return 0;
+}
+
+int insert_reading_value(char *insert_reading_sql) {
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc = sqlite3_open_v2("/home/iec61850/databases/tls_libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+
+        return 1;
+    }
+
+    rc = sqlite3_exec(db, insert_reading_sql, 0, 0, &err_msg);
+    if (rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);
+        sqlite3_close(db);
+        return 1;
+    }
+
+    sqlite3_close(db);
+
+    return 0;
+}
+
+int insert_writing_attr(char insert_attr_sql[]) {
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc = sqlite3_open_v2("/home/iec61850/databases/tls_libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+
+        return 1;
+    }
+
+    rc = sqlite3_exec(db, insert_attr_sql, 0, 0, &err_msg);
+    if (rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);
+        sqlite3_close(db);
+        return 1;
+    }
+
+    sqlite3_close(db);
+
+    return 0;
+}
+
+char* get_current_datetime() {
+    int hours, minutes, seconds, day, month, year;
+    char *datetime_str;
+    time_t now;
+    time(&now);
+    struct tm *local = localtime(&now);
+    hours = local->tm_hour;
+    hours = hours - 12;
+    minutes = local->tm_min;
+    seconds = local->tm_sec;
+
+    day = local->tm_mday;
+    month = local->tm_mon + 1;
+    year = local->tm_year + 1900;
+
+    asprintf(&datetime_str, "%02d-%02d-%0d %02d:%02d:%02d", year, month, day, hours, minutes, seconds);
+
+    return datetime_str;
+}
+
 int main(int argc, char** argv) {
 
+    printf("SQLite3 version is: %s\n", sqlite3_libversion());
+    printf("Creating SQLite3 reading_value and writing_data_attribute tables....\n");
+    int table_result = create_sqlite3_table();
+    if (table_result != 0) {
+        printf("Creating Table has been failed!\n");
+        return 1;
+    }
+
     char* hostname;
+    char* attribute_string;
     int port_number = -1;
 
-    if (argc > 2) {
+    if (argc > 3) {
         hostname = argv[1];
         port_number = atoi(argv[2]);
+        attribute_string = argv[3];
     }
-    else
+    else {
         hostname = "localhost";
+        port_number = 8102;
+        attribute_string = "libiec61850_itri_tls";
+    }
 
     TLSConfiguration tlsConfig = TLSConfiguration_create();
 
@@ -83,16 +192,30 @@ int main(int argc, char** argv) {
         if (value != NULL) {
             float fval = MmsValue_toFloat(value);
             printf("read float value: %f\n", fval);
+            printf("Try to store reading value...\n");
+            printf("Today Date time is: %s\n", get_current_datetime());
+
+            char *insert_reading_sql;
+            char fval_str[100];
+            gcvt(fval, 6, fval_str);
+            asprintf(&insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%s', '%s');", fval_str, get_current_datetime());
+            insert_reading_value(insert_reading_sql);
             MmsValue_delete(value);
         }
 
         /* write a variable to the server */
-        value = MmsValue_newVisibleString("libiec61850_itri_tls");
+        value = MmsValue_newVisibleString(attribute_string);
         IedConnection_writeObject(con, &error, "simpleIOGenericIO/GGIO1.NamPlt.vendor", IEC61850_FC_DC, value);
 
         if (error != IED_ERROR_OK) {
             printf("Error code=%d", error);
             printf("failed to write simpleIOGenericIO/GGIO1.NamPlt.vendor!\n");
+        } else {
+            printf("Writing data attribute to server has been successful!\n");
+            printf("Trying to insert data attribute to SQLite writing_data_attribute table...\n");
+            char *insert_attr_sql;
+            asprintf(&insert_attr_sql, "INSERT INTO writing_data_attribute(attribute, date_time) VALUES('%s', '%s');", attribute_string, get_current_datetime());
+            insert_writing_attr(insert_attr_sql);
         }
 
         MmsValue_delete(value);
