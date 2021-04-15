@@ -187,7 +187,7 @@ int main(int argc, char** argv) {
         }
 
         /* read an analog measurement volt value from server */
-        MmsValue* value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn2.mag.f", IEC61850_FC_MX);
+        *value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn2.mag.f", IEC61850_FC_MX);
 
         if (value != NULL) {
             float volt_val = MmsValue_toFloat(value);
@@ -204,7 +204,7 @@ int main(int argc, char** argv) {
         }
 
         /* read an analog measurement electric value from server */
-        MmsValue* value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn3.mag.f", IEC61850_FC_MX);
+        *value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn3.mag.f", IEC61850_FC_MX);
 
         if (value != NULL) {
             float electric_val = MmsValue_toFloat(value);
