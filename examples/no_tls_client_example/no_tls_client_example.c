@@ -187,10 +187,10 @@ int main(int argc, char** argv) {
         }
 
         /* read an analog measurement volt value from server */
-        MmsValue* value2 = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn2.mag.f", IEC61850_FC_MX);
+        value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn2.mag.f", IEC61850_FC_MX);
 
-        if (value2 != NULL) {
-            float volt_val = MmsValue_toFloat(value2);
+        if (value != NULL) {
+            float volt_val = MmsValue_toFloat(value);
             printf("read volt float value: %f\n", volt_val);
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
@@ -200,13 +200,13 @@ int main(int argc, char** argv) {
             gcvt(volt_val, 6, fval_str);
             asprintf(&insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%s', '%s');", fval_str, get_current_datetime());
             insert_reading_value(insert_reading_sql);
-            MmsValue_delete(value2);
+            MmsValue_delete(value);
         }
 
         /* read an analog measurement electric value from server */
-        MmsValue* value3 = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn3.mag.f", IEC61850_FC_MX);
+        MmsValue* value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn3.mag.f", IEC61850_FC_MX);
 
-        if (value3 != NULL) {
+        if (value != NULL) {
             float electric_val = MmsValue_toFloat(value);
             printf("read electric float value: %f\n", electric_val);
             printf("Try to store reading value...\n");
@@ -236,7 +236,7 @@ int main(int argc, char** argv) {
             insert_writing_attr(insert_attr_sql);
         }
 
-        MmsValue_delete(value3);
+        MmsValue_delete(value);
 
         /* read data set */
         ClientDataSet clientDataSet = IedConnection_readDataSetValues(con, &error, "simpleIOGenericIO/LLN0.Events", NULL);
