@@ -172,7 +172,7 @@ main(int argc, char** argv)
 
         t += 0.1f;
 
-        float an1 = 0.0001;
+        float an1 = (rand() % 10) + 1.0;
         float an2 = sinf(t + 1.f);
         float an3 = sinf(t + 2.f);
         float an4 = sinf(t + 3.f);
