@@ -169,22 +169,57 @@ int main(int argc, char** argv) {
         if (serverDirectory)
             LinkedList_destroy(serverDirectory);
 
-        /* read an analog measurement value from server */
+        /* read an analog measurement watt value from server */
         MmsValue* value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn1.mag.f", IEC61850_FC_MX);
 
         if (value != NULL) {
-            float fval = MmsValue_toFloat(value);
-            printf("read float value: %f\n", fval);
+            float watt_val = MmsValue_toFloat(value);
+            printf("read watt float value: %f\n", watt_val);
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
 
             char *insert_reading_sql;
             char fval_str[100];
-            gcvt(fval, 6, fval_str);
+            gcvt(watt_val, 6, fval_str);
             asprintf(&insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%s', '%s');", fval_str, get_current_datetime());
             insert_reading_value(insert_reading_sql);
             MmsValue_delete(value);
         }
+
+        /* read an analog measurement volt value from server */
+        MmsValue* value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn2.mag.f", IEC61850_FC_MX);
+
+        if (value != NULL) {
+            float volt_val = MmsValue_toFloat(value);
+            printf("read volt float value: %f\n", volt_val);
+            printf("Try to store reading value...\n");
+            printf("Today Date time is: %s\n", get_current_datetime());
+
+            char *insert_reading_sql;
+            char fval_str[100];
+            gcvt(volt_val, 6, fval_str);
+            asprintf(&insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%s', '%s');", fval_str, get_current_datetime());
+            insert_reading_value(insert_reading_sql);
+            MmsValue_delete(value);
+        }
+
+        /* read an analog measurement electric value from server */
+        MmsValue* value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn3.mag.f", IEC61850_FC_MX);
+
+        if (value != NULL) {
+            float electric_val = MmsValue_toFloat(value);
+            printf("read electric float value: %f\n", electric_val);
+            printf("Try to store reading value...\n");
+            printf("Today Date time is: %s\n", get_current_datetime());
+
+            char *insert_reading_sql;
+            char fval_str[100];
+            gcvt(electric_val, 6, fval_str);
+            asprintf(&insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%s', '%s');", fval_str, get_current_datetime());
+            insert_reading_value(insert_reading_sql);
+            MmsValue_delete(value);
+        }
+
 
         /* write a variable to the server */
         value = MmsValue_newVisibleString(attribute_string);
