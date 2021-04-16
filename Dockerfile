@@ -18,6 +18,7 @@ RUN apt-get update \
     git \
     unzip \
     build-essential \
+    pkg-config cmake-data \
     cmake \ 
     python3 \
     python3-pip \
@@ -38,7 +39,7 @@ RUN apt-get update \
 && cd ../ \
 # Remove unued files, folders and system packages
 && apt-get clean \
-&& apt-get purge -y wget git unzip build-essential cmake \
+&& apt-get purge -y wget git unzip build-essential cmake pkg-config cmake-data \
 && apt-get autoremove -y \
 && mv ./libiec61850/examples/no_tls_server_example/ /home/iec61850/ \
 && mv ./libiec61850/examples/no_tls_client_example/ /home/iec61850/ \
