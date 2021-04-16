@@ -70,6 +70,7 @@ void fetch_inverter_info() {
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string);
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
 
+    CURLcode res;
     res = curl_easy_perform(curl);
     /* Check for errors */
     if(res != CURLE_OK) {
