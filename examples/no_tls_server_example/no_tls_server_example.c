@@ -10,14 +10,113 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <curl/curl.h>
 
 #include "static_model.h"
+
+#define MAX_CHAR_SIZE 300
+
+static char INVERTER_GET_INFO[MAX_CHAR_SIZE];
+static char INVERTER_GET_STATUS[MAX_CHAR_SIZE];
+static char INVERTER_SET[MAX_CHAR_SIZE];
 
 /* import IEC 61850 device model created from SCL-File */
 extern IedModel iedModel;
 
 static int running = 0;
 static IedServer iedServer = NULL;
+
+static size_t receive_callback(void *contents, size_t size, size_t nmemb, void *userp) {
+    size_t realsize = size * nmemb;
+    memory_t *mem = (memory_t *)userp;
+    mem->data = realloc(mem->data, mem->size + realsize + 1);
+    if(mem->data == NULL) {
+        /* out of memory! */
+        printf("receive_callback(): not enough memory!\n");
+        return 0;
+    }
+    memcpy(&(mem->data[mem->size]), contents, realsize);
+    mem->size += realsize;
+    mem->data[mem->size] = 0;
+
+    return realsize;
+}
+
+void fetch_inverter_info() {
+    CURL *curl = curl_easy_init();
+    if (!curl) {
+        printf("libcurl is not loaded correctly!\n");
+    }
+
+    // set cURL response string and header string
+    char* response_string;
+    char* header_string;
+
+    // set cURL setting
+    curl_easy_setopt(curl, CURLOPT_URL, INVERTER_GET_INFO);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 60);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, receive_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
+    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string);
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
+
+    res = curl_easy_perform(curl);
+    /* Check for errors */
+    if(res != CURLE_OK) {
+        printf("fetch_inverter_info(): curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
+
+    curl_global_cleanup();
+    curl_easy_cleanup(curl);
+    curl = NULL;
+
+    printf("response string: %s\n", response_string);
+    printf("response header string: %s\n", header_string);
+}
+
+void fetch_inverter_status() {
+}
+
+void send_inverter_set() {
+}
+
+void read_config_file() {
+    strcpy(INVERTER_GET_INFO, "");
+    strcpy(INVERTER_GET_STATUS, "");
+    strcpy(INVERTER_SET, "");
+
+    char config_path[1000] = "/home/iec61850/config";
+    FILE *fp;
+    char buffer1[250], buffer2[250];
+
+    fp = fopen(config_path, "rb");
+    if (!fp) {
+        printf("Cannot open %s file", config_path);
+        exit(1);
+    }
+
+    if(fgets(buffer1, sizeof(buffer1), fp)) {
+        if(1 == sscanf(buffer1, "inverter_on_off_api=%s", buffer2)) {
+            strcpy(INVERTER_SET, buffer2);
+        }
+    }
+
+    if(fgets(buffer1, sizeof(buffer1), fp)) {
+        if(1 == sscanf(buffer1, "inverter_status_api=%s", buffer2)) {
+            strcpy(INVERTER_GET_STATUS, buffer2);
+        }
+    }
+
+    if(fgets(buffer1, sizeof(buffer1), fp)) {
+        if(1 == sscanf(buffer1, "inverter_info_api=%s", buffer2)) {
+            strcpy(INVERTER_GET_INFO, buffer2);
+        }
+    }
+
+    fclose(fp);
+}
 
 void
 sigint_handler(int signalId)
@@ -115,6 +214,15 @@ clientAuthenticator(void* parameter, AcseAuthenticationParameter authParameter, 
 int
 main(int argc, char** argv)
 {
+    printf("Reading config file...\n");
+    read_config_file();
+
+    printf("Read config file: first line is: %s\n", INVERTER_SET);
+    printf("Read config file: second line is: %s\n", INVERTER_GET_STATUS);
+    printf("Read config file: third line is: %s\n", INVERTER_GET_INFO);
+
+    fetch_inverter_info();
+
     int port_number = 8102;
     if (argc > 1)
         port_number = atoi(argv[1]);
@@ -123,7 +231,7 @@ main(int argc, char** argv)
     printf("libIEC61850 IedServer server will listen on %d\n", port_number);
 
     // Create Model IED
-    IedModel* myModel = IedModel_create("testmodel");
+    IedModel* myModel = IedModel_create("inverterModel");
 
     // Create Logical Device
     LogicalDevice* lDevice1 = LogicalDevice_create("SENSORS", myModel);
