@@ -135,10 +135,7 @@ char *read_config_file() {
     char config_path[1000] = "/home/iec61850/config";
     FILE *fp;
     char buff[255];
-    char config_arr[2][200] = {
-        "",
-        ""
-    };
+    char *config_arr[2][200];
     fp = fopen(config_path, "r");
     fscanf(fp, "%s", buff);
     config_arr[0][200] = buff;
@@ -148,7 +145,7 @@ char *read_config_file() {
  
     fclose(fp);
  
-    return &config_arr;
+    return config_arr;
 }
 
 int main(int argc, char** argv) {
