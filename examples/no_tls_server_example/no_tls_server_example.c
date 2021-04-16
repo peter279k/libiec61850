@@ -20,27 +20,10 @@ static char INVERTER_GET_INFO[MAX_CHAR_SIZE];
 static char INVERTER_GET_STATUS[MAX_CHAR_SIZE];
 static char INVERTER_SET[MAX_CHAR_SIZE];
 
-typedef struct
-{
-    char *data;
+struct memory_struct {
+    char *memory;
     size_t size;
-} memory_t;
-
-static void
-    memory_init(memory_t *memory)
-{
-    memory->size = 0;
-    memory->data = malloc(1);
-}
-
-static void
-    memory_release(memory_t *memory)
-{
-    memory->size = 0;
-    if(memory->data)
-        free(memory->data);
-}
-
+};
 
 /* import IEC 61850 device model created from SCL-File */
 extern IedModel iedModel;
@@ -50,32 +33,34 @@ static IedServer iedServer = NULL;
 
 static size_t receive_callback(void *contents, size_t size, size_t nmemb, void *userp) {
     size_t realsize = size * nmemb;
-    memory_t *mem = (memory_t *)userp;
-    memory_init(&mem);
-    mem->data = realloc(mem->data, mem->size + realsize + 1);
-    if(mem->data == NULL) {
+    struct memory_struct *mem = (struct memory_struct *)userp;
+
+    char *ptr = realloc(mem->memory, mem->size + realsize + 1);
+    if(ptr == NULL) {
         /* out of memory! */
         fprintf(stderr, "receive_callback(): not enough memory!\n");
         return 0;
     }
-    memcpy(&(mem->data[mem->size]), contents, realsize);
+
+    mem->memory = ptr;
+    memcpy(&(mem->memory[mem->size]), contents, realsize);
     mem->size += realsize;
     mem->data[mem->size] = 0;
-
-    memory_release(&mem);
 
     return realsize;
 }
 
 void fetch_inverter_info() {
     CURL *curl = curl_easy_init();
+    CURLcode res;
+    struct memory_struct chunk;
+
+    chunk.memory = malloc(1);  /* will be grown as needed by the realloc above */ 
+    chunk.size = 0;    /* no data at this point */ 
+
     if (!curl) {
         fprintf(stderr, "libcurl is not loaded correctly!\n");
     }
-
-    // set cURL response string and header string
-    char* response_string;
-    char* header_string;
 
     // set cURL setting
     curl_easy_setopt(curl, CURLOPT_URL, INVERTER_GET_INFO);
@@ -83,19 +68,23 @@ void fetch_inverter_info() {
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 60);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, receive_callback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
-    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
 
-    CURLcode res;
     res = curl_easy_perform(curl);
     /* Check for errors */
     if(res != CURLE_OK) {
         fprintf(stderr, "fetch_inverter_info(): curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    } else {
+        printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
+        fflush(stdout);
+        printf("repsonse string: %s\n", chunk.memory);
+        fflush(stdout);
     }
 
-    curl_global_cleanup();
     curl_easy_cleanup(curl);
+    free(chunk.memory);
+    curl_global_cleanup();
     curl = NULL;
 
     printf("response string: %s\n", response_string);
