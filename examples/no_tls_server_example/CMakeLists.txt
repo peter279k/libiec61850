@@ -1,6 +1,6 @@
-include_directories("." "/usr/include/x86_64-linux-gnu/curl")
+include_directories("." "/usr/include")
 
-link_directories(/usr/lib/x86_64-linux-gnu)
+link_directories(/usr/lib)
 
 set(example_SRCS
    no_tls_server_example.c
