@@ -1,6 +1,15 @@
-include_directories("." "/usr/include")
+find_package(CURL)
 
-link_directories(/usr/lib)
+IF(CURL_FOUND)
+    target_include_directories(clib PRIVATE ${CURL_INCLUDE_DIR})
+    target_link_libraries(no_tls_server_example ${CURL_LIBRARY})
+ELSE(CURL_FOUND)
+    message(FATAL_ERROR "CURL library not found")
+ENDIF(CURL_FOUND)
+
+include_directories(
+    .
+)
 
 set(example_SRCS
    no_tls_server_example.c
