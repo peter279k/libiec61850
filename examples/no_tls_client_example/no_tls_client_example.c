@@ -172,13 +172,17 @@ int main(int argc, char** argv) {
         /* read an analog measurement watt value from server */
         MmsValue* value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn1.mag.f", IEC61850_FC_MX);
 
+        char watt_fval_str[100];
+        char volt_favl_str[100];
+        char electric_fval_str[100];
+
+
         if (value != NULL) {
             float watt_val = MmsValue_toFloat(value);
             printf("read watt float value: %f\n", watt_val);
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
 
-            char watt_fval_str[100];
             gcvt(watt_val, 6, watt_fval_str);
             MmsValue_delete(value);
         }
@@ -192,7 +196,6 @@ int main(int argc, char** argv) {
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
 
-            char volt_fval_str[100];
             gcvt(volt_val, 6, volt_fval_str);
             MmsValue_delete(value);
         }
@@ -206,7 +209,6 @@ int main(int argc, char** argv) {
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
 
-            char electric_fval_str[100];
             gcvt(electric_val, 6, electric_fval_str);
             MmsValue_delete(value);
         }
