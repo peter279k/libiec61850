@@ -45,7 +45,7 @@ static size_t receive_callback(void *contents, size_t size, size_t nmemb, void *
     mem->memory = ptr;
     memcpy(&(mem->memory[mem->size]), contents, realsize);
     mem->size += realsize;
-    mem->data[mem->size] = 0;
+    mem->memory[mem->size] = 0;
 
     return realsize;
 }
