@@ -13,13 +13,18 @@ all:	$(PROJECT_BINARY_NAME)
 
 include $(LIBIEC_HOME)/make/common_targets.mk
 
+# Libraries
+INCLUDE = -I/usr/include
+LDFLAGS = -L/usr/lib
+
 LDLIBS += -lm
+LDLIBS += -lcurl
 
 model:	$(PROJECT_ICD_FILE)
 	java -jar $(LIBIEC_HOME)/tools/model_generator/genmodel.jar $(PROJECT_ICD_FILE)
 
 $(PROJECT_BINARY_NAME):	$(PROJECT_SOURCES) $(LIB_NAME)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(PROJECT_BINARY_NAME) $(PROJECT_SOURCES) $(INCLUDES) $(LIB_NAME) $(LDLIBS) -lcurl
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(PROJECT_BINARY_NAME) $(PROJECT_SOURCES) $(INCLUDES) $(LIB_NAME) $(LDLIBS)
 
 clean:
 	rm -f $(PROJECT_BINARY_NAME)
