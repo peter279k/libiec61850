@@ -141,10 +141,10 @@ char *read_config_file() {
     };
     fp = fopen(config_path, "r");
     fscanf(fp, "%s", buff);
-    config_arr[0] = buff;
+    config_arr[0][200] = buff;
 
     fgets(buff, 255, (FILE*)fp);
-    config_arr[1] = buff;
+    config_arr[1][200] = buff;
  
     fclose(fp);
  
