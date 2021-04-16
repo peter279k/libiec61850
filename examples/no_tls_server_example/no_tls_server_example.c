@@ -86,11 +86,6 @@ void fetch_inverter_info() {
     free(chunk.memory);
     curl_global_cleanup();
     curl = NULL;
-
-    printf("response string: %s\n", response_string);
-    fflush(stdout);
-    printf("response header string: %s\n", header_string);
-    fflush(stdout);
 }
 
 void fetch_inverter_status() {
