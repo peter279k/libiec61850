@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
         MmsValue* value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn1.mag.f", IEC61850_FC_MX);
 
         char watt_fval_str[100];
-        char volt_favl_str[100];
+        char volt_fval_str[100];
         char electric_fval_str[100];
 
 
@@ -215,7 +215,7 @@ int main(int argc, char** argv) {
 
         /* Insert watt, volt and electric values to inverter_info */
         char *insert_reading_sql;
-        asprintf(&insert_reading_sql, "INSERT INTO inverter_info(watt, volt, electric, measured_date_time) VALUES('%s', '%s', '%s', '%s');", watt_fval_str, volt_favl_str, electric_fval_str, get_current_datetime());
+        asprintf(&insert_reading_sql, "INSERT INTO inverter_info(watt, volt, electric, measured_date_time) VALUES('%s', '%s', '%s', '%s');", watt_fval_str, volt_fval_str, electric_fval_str, get_current_datetime());
         insert_inverter_value(insert_reading_sql);
 
         /* write a variable to the server */
