@@ -135,17 +135,17 @@ char* read_config_file() {
     char config_path[1000] = "/home/iec61850/config";
     FILE *fp;
     char buff[255];
-    char *config_arr = NULL;
+    char *config_arr[2][200];
     fp = fopen(config_path, "r");
     if (fp == NULL) {
         printf("Cannot open %s file", config_path);
         exit(1);
     }
     fscanf(fp, "%s", buff);
-    config_arr[0] = buff;
+    config_arr[0][200] = buff;
 
     fgets(buff, 255, (FILE*)fp);
-    config_arr[1] = buff;
+    config_arr[1][200] = buff;
  
     fclose(fp);
  
