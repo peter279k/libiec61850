@@ -131,7 +131,33 @@ char* get_current_datetime() {
     return datetime_str;
 }
 
+char *read_config_file() {
+    char config_path[1000] = "/home/iec61850/config";
+    FILE *fp;
+    char buff[255];
+    char config_arr[2][200] = {
+        "",
+        ""
+    };
+    fp = fopen(config_path, "r");
+    fscanf(fp, "%s", buff);i
+    config_arr[0] = buff;
+
+    fgets(buff, 255, (FILE*)fp);
+    config_arr[1] = buff;
+ 
+    fclose(fp);
+ 
+    return config_arr;
+}
+
 int main(int argc, char** argv) {
+
+    printf("Reading config file...\n");
+    char config_arr = read_config_file();
+
+    printf("Read config file: first line is: %s", config_arr[0]);
+    printf("Read config file: second line is: %s", config_arr[1]);
 
     printf("SQLite3 version is: %s\n", sqlite3_libversion());
     printf("Creating SQLite3 reading_value and writing_data_attribute tables....\n");
