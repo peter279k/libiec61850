@@ -1,5 +1,3 @@
-include(FindJSON-C.cmake)
-
 include_directories(
     .
 )
@@ -15,7 +13,10 @@ set_source_files_properties(${example_SRCS}
 ENDIF(MSVC)
 
 find_package(CURL)
+
+list(APPEND CMAKE_MODULE_PATH ".")
 find_package(JSON-C)
+
 add_executable(no_tls_server_example
   ${example_SRCS}
 )
