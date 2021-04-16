@@ -116,6 +116,9 @@ char* get_current_datetime() {
     struct tm *local = localtime(&now);
     hours = local->tm_hour;
     hours = hours - 12;
+    if (hours < 0) {
+        hours += 12;
+    }
     minutes = local->tm_min;
     seconds = local->tm_sec;
 
