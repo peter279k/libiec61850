@@ -6,6 +6,12 @@ yellow_color='\e[0;33m'
 rest_color='\e[0m'
 tag_name=$1
 
+if [[ $tag_name == "--help" || $tag_name == "help" ]]; then
+    echo -e "${green_color}Usage: ./build_docker_image.sh tag_name${rest_color}"
+    echo -e "${green_color}Usage: ./build_docker_image.sh${rest_color}"
+    exit 0;
+fi;
+
 if [[ $tag_name == "" ]]; then
     echo -e "${yellow_color}The tage name is empty and it will not run docker tag!${rest_color}"
 fi;
