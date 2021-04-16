@@ -14,6 +14,13 @@
 
 #include "sqlite3.h"
 
+#define MAX_CHAR_SIZE 300
+
+static char INVERTER_GET_INFO[MAX_CHAR_SIZE];
+static char INVERTER_GET_STATUS[MAX_CHAR_SIZE];
+static char INVERTER_SET[MAX_CHAR_SIZE];
+
+
 void
 reportCallbackFunction(void* parameter, ClientReport report)
 {
@@ -131,7 +138,48 @@ char* get_current_datetime() {
     return datetime_str;
 }
 
+void read_config_file() {
+    strcpy(INVERTER_GET_INFO, "");
+    strcpy(INVERTER_GET_STATUS, "");
+    strcpy(INVERTER_SET, "");
+
+    char config_path[1000] = "/home/iec61850/config";
+    FILE *fp;
+    char buffer1[250], buffer2[250];
+
+    fp = fopen(config_path, "rb");
+    if (!fp) {
+        printf("Cannot open %s file", config_path);
+        exit(1);
+    }
+
+    if(fgets(buffer1, sizeof(buffer1), fp)) {
+        if(1 == sscanf(buffer1, "inverter_on_off_api=%s", buffer2)) {
+            strcpy(INVERTER_SET, buffer2);
+        }
+    }
+    if(fgets(buffer1, sizeof(buffer1), fp)) {
+        if(1 == sscanf(buffer1, "inverter_status_api=%s", buffer2)) {
+            strcpy(INVERTER_GET_STATUS, buffer2);
+        }
+    }
+    if(fgets(buffer1, sizeof(buffer1), fp)) {
+        if(1 == sscanf(buffer1, "inverter_info_api=%s", buffer2)) {
+            strcpy(INVERTER_GET_INFO, buffer2);
+        }
+    }
+
+    fclose(fp);
+}
+
 int main(int argc, char** argv) {
+
+    printf("Reading config file...\n");
+    read_config_file();
+
+    printf("Read config file: first line is: %s\n", INVERTER_SET);
+    printf("Read config file: second line is: %s\n", INVERTER_GET_STATUS);
+    printf("Read config file: third line is: %s\n", INVERTER_GET_INFO);
 
     printf("SQLite3 version is: %s\n", sqlite3_libversion());
     printf("Creating SQLite3 reading_value and writing_data_attribute tables....\n");
