@@ -20,6 +20,12 @@ static char INVERTER_GET_INFO[MAX_CHAR_SIZE];
 static char INVERTER_GET_STATUS[MAX_CHAR_SIZE];
 static char INVERTER_SET[MAX_CHAR_SIZE];
 
+typedef struct
+{
+    char *data;
+    size_t size;
+} memory_t;
+
 static void
     memory_init(memory_t *memory)
 {
@@ -34,12 +40,6 @@ static void
     if(memory->data)
         free(memory->data);
 }
-
-typedef struct
-{
-    char *data;
-    size_t size;
-} memory_t;
 
 
 /* import IEC 61850 device model created from SCL-File */
