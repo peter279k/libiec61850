@@ -178,7 +178,6 @@ int main(int argc, char** argv) {
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
 
-            char *insert_reading_sql;
             char watt_fval_str[100];
             gcvt(watt_val, 6, watt_fval_str);
             MmsValue_delete(value);
@@ -193,7 +192,6 @@ int main(int argc, char** argv) {
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
 
-            char *insert_reading_sql;
             char volt_fval_str[100];
             gcvt(volt_val, 6, volt_fval_str);
             MmsValue_delete(value);
@@ -208,13 +206,13 @@ int main(int argc, char** argv) {
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
 
-            char *insert_reading_sql;
             char electric_fval_str[100];
             gcvt(electric_val, 6, electric_fval_str);
             MmsValue_delete(value);
         }
 
         /* Insert watt, volt and electric values to inverter_info */
+        char *insert_reading_sql;
         asprintf(&insert_reading_sql, "INSERT INTO inverter_info(watt, volt, electric, measured_date_time) VALUES('%s', '%s', '%s', '%s');", watt_fval_str, volt_favl_str, electric_fval_str, get_current_datetime());
         insert_inverter_value(insert_reading_sql);
 
