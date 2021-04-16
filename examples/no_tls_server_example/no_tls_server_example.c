@@ -20,6 +20,20 @@ static char INVERTER_GET_INFO[MAX_CHAR_SIZE];
 static char INVERTER_GET_STATUS[MAX_CHAR_SIZE];
 static char INVERTER_SET[MAX_CHAR_SIZE];
 
+static void
+    memory_init(memory_t *memory)
+{
+    memory->size = 0;
+    memory->data = malloc(1);
+}
+
+static void
+    memory_release(memory_t *memory)
+{
+    memory->size = 0;
+    if(memory->data)
+        free(memory->data);
+}
 
 typedef struct
 {
@@ -37,6 +51,7 @@ static IedServer iedServer = NULL;
 static size_t receive_callback(void *contents, size_t size, size_t nmemb, void *userp) {
     size_t realsize = size * nmemb;
     memory_t *mem = (memory_t *)userp;
+    memory_init(&mem);
     mem->data = realloc(mem->data, mem->size + realsize + 1);
     if(mem->data == NULL) {
         /* out of memory! */
@@ -46,6 +61,8 @@ static size_t receive_callback(void *contents, size_t size, size_t nmemb, void *
     memcpy(&(mem->data[mem->size]), contents, realsize);
     mem->size += realsize;
     mem->data[mem->size] = 0;
+
+    memory_release(&mem);
 
     return realsize;
 }
