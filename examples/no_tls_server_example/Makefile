@@ -14,8 +14,8 @@ all:	$(PROJECT_BINARY_NAME)
 include $(LIBIEC_HOME)/make/common_targets.mk
 
 # Libraries
-INCLUDE = -I/usr/include/x86_64-linux-gnu
-LDFLAGS = -L/usr/lib/x86_64-linux-gnu
+INCLUDES += -I/usr/include
+LDFLAGS += -L/usr/lib
 
 LDLIBS += -lm
 LDLIBS += -lcurl
