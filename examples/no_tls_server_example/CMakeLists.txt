@@ -1,7 +1,4 @@
-include_directories(
-   .
-   /usr/include/x86_64-linux-gnu/curl
-)
+include_directories("." "/usr/include/x86_64-linux-gnu/curl")
 
 link_directories(/usr/lib/x86_64-linux-gnu)
 
