@@ -1,7 +1,6 @@
 find_package(CURL)
 
 IF(CURL_FOUND)
-    target_include_directories(clib PRIVATE ${CURL_INCLUDE_DIR})
     target_link_libraries(no_tls_server_example ${CURL_LIBRARY})
 ELSE(CURL_FOUND)
     message(FATAL_ERROR "CURL library not found")
