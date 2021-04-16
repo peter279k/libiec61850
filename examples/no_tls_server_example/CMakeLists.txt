@@ -1,6 +1,9 @@
 include_directories(
    .
+   /usr/include
 )
+
+link_directories(/usr/lib)
 
 set(example_SRCS
    no_tls_server_example.c

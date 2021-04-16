@@ -73,10 +73,7 @@ include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/src/mms/inc_private
     ${CMAKE_CURRENT_LIST_DIR}/src/mms/iso_mms/asn1c
     ${CMAKE_CURRENT_LIST_DIR}/src/logging
-    /usr/include/x86_64-linux-gnu
 )
-
-link_directories(/usr/lib/x86_64-linux-gnu)
 
 set(API_HEADERS
 	hal/inc/hal_base.h
