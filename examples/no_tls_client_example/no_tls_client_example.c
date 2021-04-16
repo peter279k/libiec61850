@@ -209,7 +209,7 @@ int main(int argc, char** argv) {
             printf("Today Date time is: %s\n", get_current_datetime());
 
             char *insert_reading_sql;
-            char fval_str[100];
+            char electric_fval_str[100];
             gcvt(electric_val, 6, electric_fval_str);
             MmsValue_delete(value);
         }
