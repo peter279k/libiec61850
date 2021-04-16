@@ -53,7 +53,7 @@ static size_t receive_callback(void *contents, size_t size, size_t nmemb, void *
 void fetch_inverter_info() {
     CURL *curl = curl_easy_init();
     if (!curl) {
-        fprintf(stdout, "libcurl is not loaded correctly!\n");
+        fprintf(stderr, "libcurl is not loaded correctly!\n");
     }
 
     // set cURL response string and header string
@@ -81,8 +81,10 @@ void fetch_inverter_info() {
     curl_easy_cleanup(curl);
     curl = NULL;
 
-    fprintf(stdout, "response string: %s\n", response_string);
-    fprintf(stdout, "response header string: %s\n", header_string);
+    printf("response string: %s\n", response_string);
+    fflush(stdout);
+    printf("response header string: %s\n", header_string);
+    fflush(stdout);
 }
 
 void fetch_inverter_status() {
@@ -138,7 +140,8 @@ writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnect
 {
     if (dataAttribute == IEDMODEL_GenericIO_GGIO1_NamPlt_vendor) {
         char* newValue = MmsValue_toString(value);
-        fprintf(stdout, "New value for OutVarSet_setMag_f = %s\n", newValue);
+        printf("New value for OutVarSet_setMag_f = %s\n", newValue);
+        fflush(stdout);
         return DATA_ACCESS_ERROR_SUCCESS;
     }
 
@@ -152,12 +155,17 @@ controlHandlerForBinaryOutput(ControlAction action, void* parameter, MmsValue* v
         return CONTROL_RESULT_FAILED;
 
     if (MmsValue_getType(value) == MMS_BOOLEAN) {
-        fprintf(stdout, "received binary control command: ");
+        printf("received binary control command: ");
+        fflush(stdout);
 
-        if (MmsValue_getBoolean(value))
-            fprintf(stdout, "on\n");
-        else
-            fprintf(stdout, "off\n");
+        if (MmsValue_getBoolean(value)) {
+            printf("on\n");
+            fflush(stdout);
+        }
+        else {
+            printf("off\n");
+            fflush(stdout);
+        }
     }
     else
         return CONTROL_RESULT_FAILED;
@@ -190,10 +198,14 @@ controlHandlerForBinaryOutput(ControlAction action, void* parameter, MmsValue* v
 static void
 connectionHandler (IedServer self, ClientConnection connection, bool connected, void* parameter)
 {
-    if (connected)
-        fprintf(stdout, "Connection opened\n");
-    else
-        fprintf(stdout, "Connection closed\n");
+    if (connected) {
+        printf("Connection opened\n");
+        fflush(stdout);
+    }
+    else {
+        printf("Connection closed\n");
+        fflush(stdout);
+    }
 }
 
 static void
@@ -202,20 +214,30 @@ printAppTitle(ItuObjectIdentifier* oid)
     int i;
 
     for (i = 0; i < oid->arcCount; i++) {
-        fprintf(stdout, "%i", oid->arc[i]);
+        printf("%i", oid->arc[i]);
+        fflush(stdout);
 
-        if (i != (oid->arcCount - 1))
-            fprintf(stdout, ".");
+        if (i != (oid->arcCount - 1)) {
+            printf(".");
+            fflush(stdout);
+        }
     }
 }
 
 static bool
 clientAuthenticator(void* parameter, AcseAuthenticationParameter authParameter, void** securityToken, IsoApplicationReference* appRef)
 {
-    fprintf(stdout, "ACSE Authenticator:\n");
-    fprintf(stdout, "  client ap-title: "); printAppTitle(&(appRef->apTitle)); printf("\n");
-    fprintf(stdout, "  client ae-qualifier: %i\n", appRef->aeQualifier);
-    fprintf(stdout, "  auth-mechanism: %i\n", authParameter->mechanism);
+    printf("ACSE Authenticator:\n");
+    fflush(stdout);
+    
+    printf("  client ap-title: "); printAppTitle(&(appRef->apTitle)); printf("\n");
+    fflush(stdout);
+
+    printf("  client ae-qualifier: %i\n", appRef->aeQualifier);
+    fflush(stdout);
+
+    printf("  auth-mechanism: %i\n", authParameter->mechanism);
+    fflush(stdout);
 
     return true;
 }
@@ -223,12 +245,18 @@ clientAuthenticator(void* parameter, AcseAuthenticationParameter authParameter, 
 int
 main(int argc, char** argv)
 {
-    fprintf(stdout, "Reading config file...\n");
+    printf("Reading config file...\n");
+    fflush(stdout);
     read_config_file();
 
-    fprintf(stdout, "Read config file: first line is: %s\n", INVERTER_SET);
-    fprintf(stdout, "Read config file: second line is: %s\n", INVERTER_GET_STATUS);
-    fprintf(stdout, "Read config file: third line is: %s\n", INVERTER_GET_INFO);
+    printf("Read config file: first line is: %s\n", INVERTER_SET);
+    fflush(stdout);
+
+    printf("Read config file: second line is: %s\n", INVERTER_GET_STATUS);
+    fflush(stdout);
+
+    printf("Read config file: third line is: %s\n", INVERTER_GET_INFO);
+    fflush(stdout);
 
     fetch_inverter_info();
 
@@ -236,8 +264,11 @@ main(int argc, char** argv)
     if (argc > 1)
         port_number = atoi(argv[1]);
 
-    fprintf(stdout, "Using libIEC61850 version %s\n", LibIEC61850_getVersionString());
-    fprintf(stdout, "libIEC61850 IedServer server will listen on %d\n", port_number);
+    printf("Using libIEC61850 version %s\n", LibIEC61850_getVersionString());
+    fflush(stdout);
+
+    printf("libIEC61850 IedServer server will listen on %d\n", port_number);
+    fflush(stdout);
 
     // Create Model IED
     IedModel* myModel = IedModel_create("inverterModel");
