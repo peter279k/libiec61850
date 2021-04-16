@@ -20,6 +20,10 @@ static char INVERTER_GET_INFO[MAX_CHAR_SIZE];
 static char INVERTER_GET_STATUS[MAX_CHAR_SIZE];
 static char INVERTER_SET[MAX_CHAR_SIZE];
 
+static char INVERTER_INFO_RES[MAX_CHAR_SIZE];
+static char INVERTER_STATUS_RES[MAX_CHAR_SIZE];
+static char INVERTER_SET_RES[MAX_CHAR_SIZE];
+
 struct memory_struct {
     char *memory;
     size_t size;
@@ -78,7 +82,8 @@ void fetch_inverter_info() {
     } else {
         printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
         fflush(stdout);
-        printf("repsonse string: %s\n", chunk.memory);
+        strcpy(INVERTER_INFO_RES, "");
+        strcpy(INVERTER_INFO_RES, chunk.memory);
         fflush(stdout);
     }
 
@@ -260,6 +265,7 @@ main(int argc, char** argv)
     fflush(stdout);
 
     fetch_inverter_info();
+    printf("repsonse string: %s\n", INVERTER_INFO_RES);
 
     int port_number = 8102;
     if (argc > 1)
