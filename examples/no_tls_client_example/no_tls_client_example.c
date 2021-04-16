@@ -140,7 +140,7 @@ char *read_config_file() {
         ""
     };
     fp = fopen(config_path, "r");
-    fscanf(fp, "%s", buff);i
+    fscanf(fp, "%s", buff);
     config_arr[0] = buff;
 
     fgets(buff, 255, (FILE*)fp);
