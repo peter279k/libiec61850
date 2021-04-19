@@ -162,9 +162,9 @@ void send_inverter_set(bool inverter_set_val) {
 
     // set cURL setting
     curl_easy_setopt(curl, CURLOPT_URL, INVERTER_SET);
-    curl_easy_setopt(ch, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_easy_setopt(ch, CURLOPT_HTTPHEADER, headers);
-    curl_easy_setopt(ch, CURLOPT_POSTFIELDS, json_object_to_json_string(json));
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_object_to_json_string(json));
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 60);
