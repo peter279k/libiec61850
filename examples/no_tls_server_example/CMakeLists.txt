@@ -28,7 +28,7 @@ ELSE(CURL_FOUND)
 ENDIF(CURL_FOUND)
 
 IF(JSON-C_FOUND)
-    target_link_libraries(no_tls_server_example ${CURL_LIBRARY} ${JSONC_LIBRARIES} iec61850)
+    target_link_libraries(no_tls_server_example ${CURL_LIBRARY} ${JSON-C_LIBRARIES} iec61850)
 ELSE(JSON-C_FOUND)
     message(FATAL_ERROR "JSON-C library not found")
 ENDIF(JSON-C_FOUND)
