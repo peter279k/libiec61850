@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <curl/curl.h>
-#include <json/json.h>
+#include <json-c/json.h>
 
 #include "static_model.h"
 
