@@ -25,6 +25,15 @@ static char INVERTER_INFO_RES[MAX_CHAR_SIZE];
 static char INVERTER_STATUS_RES[MAX_CHAR_SIZE];
 static char INVERTER_SET_RES[MAX_CHAR_SIZE];
 
+static float INVERTER_CURRENT;
+static float INVERTER_VOLT;
+static float INVERTER_POWER;
+
+static bool INVERTER_ON_OFF;
+static bool INVERTER_CONNECTION;
+static char INVERTER_VERSION[MAX_CHAR_SIZE];
+static char INVERTER_CONNECTION_STATUS[MAX_CHAR_SIZE];
+
 struct memory_struct {
     char *memory;
     size_t size;
@@ -53,6 +62,52 @@ static size_t receive_callback(void *contents, size_t size, size_t nmemb, void *
     mem->memory[mem->size] = 0;
 
     return realsize;
+}
+
+void process_response_json(char *res_json) {
+    struct json_object *jobj;
+    struct json_object *value;
+    enum json_tokener_error error;
+    jobj = json_tokener_parse(str, &error);
+    if (error != json_tokener_success) {
+        fprintf(stderr, "process_response_json: %s parsing is failed.", res_json);
+    } else {
+        bool is_found = json_object_object_get_ex(obj, "success", &value);
+        if (is_found) {
+            INVERTER_ON_OFF = json_object_get_boolean(value);
+            fflush(stdout);
+        }
+        is_found = json_object_object_get_ex(obj, "LoadCurrent", &value);
+        if (is_found) {
+            INVERTER_CURRENT = json_object_get_int(value) * 0.01;
+        }
+        is_found = json_object_object_get_ex(obj, "LoadVolt", &value);
+        if (is_found) {
+            INVERTER_VOLT = json_object_get_int(value) * 0.1;
+        }
+        is_found = json_object_object_get_ex(obj, "LoadPower", &value);
+        if (is_found) {
+            INVERTER_POWER = json_object_get_int(value) * 0.1;
+        }
+        is_found = json_object_object_get_ex(obj, "version", &value);
+        if (is_found) {
+           strcpy(INVERTER_VERSION, "");
+           strcpy(INVERTER_VERSION, json_object_get_string(value));
+        }
+        is_found = json_object_object_get_ex(obj, "connStatus", &value);
+        if (is_found) {
+           strcpy(INVERTER_CONNECTION_STATUS, "");
+           strcpy(INVERTER_CONNECTION_STATUS, json_object_get_string(value));
+        }
+        is_found = json_object_object_get_ex(obj, "connection", &value);
+        if (is_found) {
+            INVERTER_CONNECTION = json_object_get_boolean(value);
+        }
+        is_found = json_object_object_get_ex(obj, "InverterOn", &value);
+        if (is_found) {
+            INVERTER_ON_OFF = json_object_get_boolean(value);
+        }
+    }
 }
 
 void fetch_inverter_info() {
@@ -359,14 +414,37 @@ main(int argc, char** argv)
     fflush(stdout);
 
     fetch_inverter_info();
-    printf("repsonse string: %s\n", INVERTER_INFO_RES);
+    process_response_json(INVERTER_INFO_RES);
+
+    printf("Inverter getInfo API INVERTER_ON_OFF: %d", INVERTER_ON_OFF);
+    fflush(stdout);
+
+    printf("Inverter getInfo API INVERTER_CONNECTION: %d", INVERTER_CONNECTION);
+    fflush(stdout);
+
+    printf("Inverter getInfo API INVERTER_VERSION: %s", INVERTER_VERSION);
+    fflush(stdout);
+
+    printf("Inverter getInfo API INVERTER_CONNECTION_STATUS: %s", INVERTER_CONNECTION_STATUS);
+    fflush(stdout);
+
 
     fetch_inverter_status();
-    printf("repsonse string: %s\n", INVERTER_STATUS_RES);
+    process_response_json(INVERTER_STATUS_RES);
+
+    printf("Inverter getStatus API INVERTER_CURRENT: %s", INVERTER_CURRENT);
+    fflush(stdout);
+
+    printf("Inverter getStatus API INVERTER_VOLT: %s", INVERTER_VOLT);
+    fflush(stdout);
+    
+    printf("Inverter getStatus API INVERTER_POWER: %s", INVERTER_POWER);
+    fflush(stdout);
 
     send_inverter_set(true);
-    printf("repsonse string: %s\n", INVERTER_SET_RES);
-
+    process_response_json(INVERTER_SET_RES);
+    printf("Inverter getInfo API INVERTER_ON_OFF: %d", INVERTER_ON_OFF);
+    fflush(stdout);
 
     int port_number = 8102;
     if (argc > 1)
