@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <curl/curl.h>
+#include <json/json.h>
 
 #include "static_model.h"
 
@@ -132,10 +133,16 @@ void fetch_inverter_status() {
     curl = NULL;
 }
 
-void send_inverter_set() {
+void send_inverter_set(bool inverter_set_val) {
     CURL *curl = curl_easy_init();
     CURLcode res;
     struct memory_struct chunk;
+
+    json_object *json;
+    enum json_tokener_error jerr = json_tokener_success;
+
+    struct curl_slist *headers = NULL;
+    bool success = true;
 
     chunk.memory = malloc(1);  /* will be grown as needed by the realloc above */ 
     chunk.size = 0;    /* no data at this point */ 
@@ -144,8 +151,20 @@ void send_inverter_set() {
         fprintf(stderr, "libcurl is not loaded correctly!\n");
     }
 
+    headers = curl_slist_append(headers, "Accept: application/json");
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+
+    json = json_object_new_object();
+    json_object_object_add(json, "InverterOn", json_object_new_boolean(inverter_set_val));
+    json_object_object_add(json, "note", json_object_new_string(""));
+    json_object_object_add(json, "success", json_object_new_boolean(success));
+
+
     // set cURL setting
     curl_easy_setopt(curl, CURLOPT_URL, INVERTER_SET);
+    curl_easy_setopt(ch, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_easy_setopt(ch, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(ch, CURLOPT_POSTFIELDS, json_object_to_json_string(json));
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 60);
@@ -168,7 +187,10 @@ void send_inverter_set() {
     curl_easy_cleanup(curl);
     free(chunk.memory);
     curl_global_cleanup();
+    curl_slist_free_all(headers);
     curl = NULL;
+
+    json_object_put(json);
 }
 
 void read_config_file() {
@@ -342,7 +364,7 @@ main(int argc, char** argv)
     fetch_inverter_status();
     printf("repsonse string: %s\n", INVERTER_STATUS_RES);
 
-    send_inverter_set();
+    send_inverter_set(true);
     printf("repsonse string: %s\n", INVERTER_SET_RES);
 
 
