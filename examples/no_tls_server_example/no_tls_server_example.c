@@ -94,9 +94,81 @@ void fetch_inverter_info() {
 }
 
 void fetch_inverter_status() {
+    CURL *curl = curl_easy_init();
+    CURLcode res;
+    struct memory_struct chunk;
+
+    chunk.memory = malloc(1);  /* will be grown as needed by the realloc above */ 
+    chunk.size = 0;    /* no data at this point */ 
+
+    if (!curl) {
+        fprintf(stderr, "libcurl is not loaded correctly!\n");
+    }
+
+    // set cURL setting
+    curl_easy_setopt(curl, CURLOPT_URL, INVERTER_GET_STATUS);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 60);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, receive_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
+
+    res = curl_easy_perform(curl);
+    /* Check for errors */
+    if(res != CURLE_OK) {
+        fprintf(stderr, "fetch_inverter_info(): curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    } else {
+        printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
+        fflush(stdout);
+        strcpy(INVERTER_STATUS_RES, "");
+        strcpy(INVERTER_STATUS_RES, chunk.memory);
+        fflush(stdout);
+    }
+
+    curl_easy_cleanup(curl);
+    free(chunk.memory);
+    curl_global_cleanup();
+    curl = NULL;
 }
 
 void send_inverter_set() {
+    CURL *curl = curl_easy_init();
+    CURLcode res;
+    struct memory_struct chunk;
+
+    chunk.memory = malloc(1);  /* will be grown as needed by the realloc above */ 
+    chunk.size = 0;    /* no data at this point */ 
+
+    if (!curl) {
+        fprintf(stderr, "libcurl is not loaded correctly!\n");
+    }
+
+    // set cURL setting
+    curl_easy_setopt(curl, CURLOPT_URL, INVERTER_SET);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 60);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, receive_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
+
+    res = curl_easy_perform(curl);
+    /* Check for errors */
+    if(res != CURLE_OK) {
+        fprintf(stderr, "fetch_inverter_info(): curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    } else {
+        printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
+        fflush(stdout);
+        strcpy(INVERTER_SET_RES, "");
+        strcpy(INVERTER_SET_RES, chunk.memory);
+        fflush(stdout);
+    }
+
+    curl_easy_cleanup(curl);
+    free(chunk.memory);
+    curl_global_cleanup();
+    curl = NULL;
 }
 
 void read_config_file() {
@@ -266,6 +338,13 @@ main(int argc, char** argv)
 
     fetch_inverter_info();
     printf("repsonse string: %s\n", INVERTER_INFO_RES);
+
+    fetch_inverter_status();
+    printf("repsonse string: %s\n", INVERTER_STATUS_RES);
+
+    send_inverter_set();
+    printf("repsonse string: %s\n", INVERTER_SET_RES);
+
 
     int port_number = 8102;
     if (argc > 1)
