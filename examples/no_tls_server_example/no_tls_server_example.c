@@ -34,6 +34,9 @@ static bool INVERTER_CONNECTION;
 static char INVERTER_VERSION[MAX_CHAR_SIZE];
 static char INVERTER_CONNECTION_STATUS[MAX_CHAR_SIZE];
 
+static char INVERTER_ON_STRING[MAX_CHAR_SIZE] = "inverter_on";
+static char INVERTER_OFF_STRING[MAX_CHAR_SIZE] = "inverter_off";
+
 struct memory_struct {
     char *memory;
     size_t size;
@@ -297,6 +300,26 @@ writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnect
         char* newValue = MmsValue_toString(value);
         printf("New value for OutVarSet_setMag_f = %s\n", newValue);
         fflush(stdout);
+        int compared_result = strcmp(newValue, INVERTER_ON_STRING);
+        if (compared_result == 0) {
+            printf("Inverter will send on operation\n");
+            fflush(stdout);
+
+            send_inverter_set(true);
+            process_response_json(INVERTER_SET_RES);
+            printf("Inverter getInfo API INVERTER_ON_OFF: %d\n", INVERTER_ON_OFF);
+            fflush(stdout);
+        }
+        int compared_result = strcmp(newValue, INVERTER_OFF_STRING);
+        if (compared_result == 0) {
+            printf("Inverter will send off operation\n");
+            fflush(stdout);
+
+            send_inverter_set(false);
+            process_response_json(INVERTER_SET_RES);
+            printf("Inverter getInfo API INVERTER_ON_OFF: %d\n", INVERTER_ON_OFF);
+            fflush(stdout);
+        }
         return DATA_ACCESS_ERROR_SUCCESS;
     }
 
@@ -429,23 +452,6 @@ main(int argc, char** argv)
     fflush(stdout);
 
 
-    fetch_inverter_status();
-    process_response_json(INVERTER_STATUS_RES);
-
-    printf("Inverter getStatus API INVERTER_CURRENT: %.2f\n", INVERTER_CURRENT);
-    fflush(stdout);
-
-    printf("Inverter getStatus API INVERTER_VOLT: %.1f\n", INVERTER_VOLT);
-    fflush(stdout);
- 
-    printf("Inverter getStatus API INVERTER_POWER: %.1f\n", INVERTER_POWER);
-    fflush(stdout);
-
-    send_inverter_set(true);
-    process_response_json(INVERTER_SET_RES);
-    printf("Inverter getInfo API INVERTER_ON_OFF: %d\n", INVERTER_ON_OFF);
-    fflush(stdout);
-
     int port_number = 8102;
     if (argc > 1)
         port_number = atoi(argv[1]);
@@ -506,9 +512,12 @@ main(int argc, char** argv)
 
         t += 0.1f;
 
-        float watt = 258.1;
-        float volt = 230.5;
-        float electric = 1.12;
+        fetch_inverter_status();
+        process_response_json(INVERTER_STATUS_RES);
+
+        float watt = INVERTER_CURRENT;
+        float volt = INVERTER_VOLT;
+        float electric = INVERTER_POWER;
         float an4 = sinf(t + 3.f);
 
         IedServer_lockDataModel(iedServer);
