@@ -70,7 +70,7 @@ void process_response_json(char *res_json) {
     enum json_tokener_error error;
     obj = json_tokener_parse_verbose(res_json, &error);
     if (error != json_tokener_success) {
-        fprintf(stderr, "process_response_json: %s parsing is failed.", res_json);
+        fprintf(stderr, "process_response_json: %s parsing is failed.\n", res_json);
     } else {
         bool is_found = json_object_object_get_ex(obj, "success", &value);
         if (is_found) {
@@ -259,7 +259,7 @@ void read_config_file() {
 
     fp = fopen(config_path, "rb");
     if (!fp) {
-        fprintf(stderr, "Cannot open %s file", config_path);
+        fprintf(stderr, "Cannot open %s file\n", config_path);
         exit(1);
     }
 
@@ -310,7 +310,7 @@ controlHandlerForBinaryOutput(ControlAction action, void* parameter, MmsValue* v
         return CONTROL_RESULT_FAILED;
 
     if (MmsValue_getType(value) == MMS_BOOLEAN) {
-        printf("received binary control command: ");
+        printf("received binary control command: \n");
         fflush(stdout);
 
         if (MmsValue_getBoolean(value)) {
@@ -416,34 +416,34 @@ main(int argc, char** argv)
     fetch_inverter_info();
     process_response_json(INVERTER_INFO_RES);
 
-    printf("Inverter getInfo API INVERTER_ON_OFF: %d", INVERTER_ON_OFF);
+    printf("Inverter getInfo API INVERTER_ON_OFF: %d\n", INVERTER_ON_OFF);
     fflush(stdout);
 
-    printf("Inverter getInfo API INVERTER_CONNECTION: %d", INVERTER_CONNECTION);
+    printf("Inverter getInfo API INVERTER_CONNECTION: %d\n", INVERTER_CONNECTION);
     fflush(stdout);
 
-    printf("Inverter getInfo API INVERTER_VERSION: %s", INVERTER_VERSION);
+    printf("Inverter getInfo API INVERTER_VERSION: %s\n", INVERTER_VERSION);
     fflush(stdout);
 
-    printf("Inverter getInfo API INVERTER_CONNECTION_STATUS: %s", INVERTER_CONNECTION_STATUS);
+    printf("Inverter getInfo API INVERTER_CONNECTION_STATUS: %s\n", INVERTER_CONNECTION_STATUS);
     fflush(stdout);
 
 
     fetch_inverter_status();
     process_response_json(INVERTER_STATUS_RES);
 
-    printf("Inverter getStatus API INVERTER_CURRENT: %.2f", INVERTER_CURRENT);
+    printf("Inverter getStatus API INVERTER_CURRENT: %.2f\n", INVERTER_CURRENT);
     fflush(stdout);
 
-    printf("Inverter getStatus API INVERTER_VOLT: %.1f", INVERTER_VOLT);
+    printf("Inverter getStatus API INVERTER_VOLT: %.1f\n", INVERTER_VOLT);
     fflush(stdout);
  
-    printf("Inverter getStatus API INVERTER_POWER: %.1f", INVERTER_POWER);
+    printf("Inverter getStatus API INVERTER_POWER: %.1f\n", INVERTER_POWER);
     fflush(stdout);
 
     send_inverter_set(true);
     process_response_json(INVERTER_SET_RES);
-    printf("Inverter getInfo API INVERTER_ON_OFF: %d", INVERTER_ON_OFF);
+    printf("Inverter getInfo API INVERTER_ON_OFF: %d\n", INVERTER_ON_OFF);
     fflush(stdout);
 
     int port_number = 8102;
