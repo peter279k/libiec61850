@@ -310,7 +310,7 @@ writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnect
             printf("Inverter getInfo API INVERTER_ON_OFF: %d\n", INVERTER_ON_OFF);
             fflush(stdout);
         }
-        int compared_result = strcmp(newValue, INVERTER_OFF_STRING);
+        compared_result = strcmp(newValue, INVERTER_OFF_STRING);
         if (compared_result == 0) {
             printf("Inverter will send off operation\n");
             fflush(stdout);
