@@ -139,11 +139,8 @@ void fetch_inverter_info() {
     if(res != CURLE_OK) {
         fprintf(stderr, "fetch_inverter_info(): curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
     } else {
-        printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
-        fflush(stdout);
         strcpy(INVERTER_INFO_RES, "");
         strcpy(INVERTER_INFO_RES, chunk.memory);
-        fflush(stdout);
     }
 
     curl_easy_cleanup(curl);
@@ -178,11 +175,8 @@ void fetch_inverter_status() {
     if(res != CURLE_OK) {
         fprintf(stderr, "fetch_inverter_status(): curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
     } else {
-        printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
-        fflush(stdout);
         strcpy(INVERTER_STATUS_RES, "");
         strcpy(INVERTER_STATUS_RES, chunk.memory);
-        fflush(stdout);
     }
 
     curl_easy_cleanup(curl);
@@ -235,11 +229,8 @@ void send_inverter_set(bool inverter_set_val) {
     if(res != CURLE_OK) {
         fprintf(stderr, "send_inverter_set(): curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
     } else {
-        printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
-        fflush(stdout);
         strcpy(INVERTER_SET_RES, "");
         strcpy(INVERTER_SET_RES, chunk.memory);
-        fflush(stdout);
     }
 
     curl_easy_cleanup(curl);
