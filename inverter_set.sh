@@ -14,7 +14,11 @@ if [[ $write_data_attr == "" ]]; then
     exit 1;
 fi;
 
-docker exec "$mode-iec61850-server" bash -c "cd no_tls_client_example/ && ./no_tls_client_example $ip 8102 $write_data_attr"
+if [[ $mode == "no_tls" ]]; then
+    docker exec "$mode-iec61850-server" bash -c "cd no_tls_client_example/ && ./no_tls_client_example $ip 8102 $write_data_attr"
+else
+    docker exec "$mode-iec61850-server" bash -c "cd tls_client_example/ && ./tls_client_example $ip 8102 $write_data_attr"
+fi;
 
 if [[ $? != 0 ]]; then
     echo -e "${red_color}The $mode-iec61850-server container is failed to run.${rest_color}"
