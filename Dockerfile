@@ -11,11 +11,14 @@ RUN apt-get update \
 && apt-get update \
 && apt-get install -y \
     ssh \
+    libcurl4-openssl-dev \
+    libjson-c-dev libjson-c3 \
     libpcre3 libpcre3-dev \
     wget \
     git \
     unzip \
     build-essential \
+    pkg-config cmake-data \
     cmake \ 
     python3 \
     python3-pip \
@@ -23,7 +26,7 @@ RUN apt-get update \
 && export DEBIAN_FRONTEND="" \
 # Clone libiec61850 repository
 && git config --global http.sslVerify false \
-&& git clone https://github.com/peter279k/libiec61850.git \
+&& git clone https://github.com/peter279k/libiec61850.git --branch issue_#36 \
 # Download mbedtls
 && wget --no-check-certificate https://tls.mbed.org/download/mbedtls-2.16.0-apache.tgz \
 && wget --no-check-certificate https://www.sqlite.org/2021/sqlite-amalgamation-3340100.zip \
@@ -36,7 +39,7 @@ RUN apt-get update \
 && cd ../ \
 # Remove unued files, folders and system packages
 && apt-get clean \
-&& apt-get purge -y wget git unzip build-essential cmake \
+&& apt-get purge -y wget git unzip build-essential cmake pkg-config cmake-data \
 && apt-get autoremove -y \
 && mv ./libiec61850/examples/no_tls_server_example/ /home/iec61850/ \
 && mv ./libiec61850/examples/no_tls_client_example/ /home/iec61850/ \

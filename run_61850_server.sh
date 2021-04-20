@@ -48,7 +48,7 @@ if [[ ! -f ./config_file ]]; then
     exit 1;
 fi;
 
-docker run -d --name="$mode-iec61850-server" --restart=always -v $PWD/config_file:/home/iec61850/config -v $PWD/databases:/home/iec61850/databases -p "$port_number:8102" libiec61850:$tag_name -c "cd ./no_tls_server_example && ./no_tls_server_example 8102"
+docker run -d --name="$mode-iec61850-server" --restart=always -v $PWD/config_file:/home/iec61850/config --network host -v $PWD/databases:/home/iec61850/databases -p "$port_number:8102" libiec61850:$tag_name -c "cd ./no_tls_server_example && ./no_tls_server_example 8102"
 
 if [[ $? != 0 ]]; then
     echo -e "${red_color}IEC-61850 server container is failed to run...${rest_color}"
