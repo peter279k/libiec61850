@@ -437,7 +437,7 @@ main(int argc, char** argv)
 
     printf("Inverter getStatus API INVERTER_VOLT: %s", INVERTER_VOLT);
     fflush(stdout);
-    
+ 
     printf("Inverter getStatus API INVERTER_POWER: %s", INVERTER_POWER);
     fflush(stdout);
 
