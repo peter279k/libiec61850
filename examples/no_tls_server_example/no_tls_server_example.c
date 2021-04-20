@@ -68,7 +68,7 @@ void process_response_json(char *res_json) {
     struct json_object *jobj;
     struct json_object *value;
     enum json_tokener_error error;
-    jobj = json_tokener_parse(str, &error);
+    obj = json_tokener_parse_verbose(res_json, &error);
     if (error != json_tokener_success) {
         fprintf(stderr, "process_response_json: %s parsing is failed.", res_json);
     } else {
@@ -432,13 +432,13 @@ main(int argc, char** argv)
     fetch_inverter_status();
     process_response_json(INVERTER_STATUS_RES);
 
-    printf("Inverter getStatus API INVERTER_CURRENT: %s", INVERTER_CURRENT);
+    printf("Inverter getStatus API INVERTER_CURRENT: %.2f", INVERTER_CURRENT);
     fflush(stdout);
 
-    printf("Inverter getStatus API INVERTER_VOLT: %s", INVERTER_VOLT);
+    printf("Inverter getStatus API INVERTER_VOLT: %.1f", INVERTER_VOLT);
     fflush(stdout);
  
-    printf("Inverter getStatus API INVERTER_POWER: %s", INVERTER_POWER);
+    printf("Inverter getStatus API INVERTER_POWER: %.1f", INVERTER_POWER);
     fflush(stdout);
 
     send_inverter_set(true);
