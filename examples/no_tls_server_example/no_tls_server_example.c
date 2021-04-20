@@ -65,7 +65,7 @@ static size_t receive_callback(void *contents, size_t size, size_t nmemb, void *
 }
 
 void process_response_json(char *res_json) {
-    struct json_object *jobj;
+    struct json_object *obj;
     struct json_object *value;
     enum json_tokener_error error;
     obj = json_tokener_parse_verbose(res_json, &error);
