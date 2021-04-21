@@ -16,7 +16,7 @@ if [[ $delete_ans == "Y" ]]; then
 
     if [[ ! -d ./databaes/ ]]; then 
         mkdir ./databases/
-        chown -R $USER:$USER ./databases/
+        chown -R "1000:1000" ./databases/
         chmod -R 755 ./databases/
     fi;
 else
