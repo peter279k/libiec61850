@@ -8,9 +8,6 @@ mode=$1
 tag_name=$2
 port_number=$3
 
-user_id=$(id | awk '{print $1}' | awk '{split($1,a,"="); print a[2]}' | sed -e "s/['(', ')', $USER]//g")
-group_id=$(id | awk '{print $2}' | awk '{split($1,a,"="); print a[2]}' | sed -e "s/['(', ')', $USER]//g")
-
 read -p "Do you want to delete databases folder?[Y/n] " delete_ans
 
 if [[ $delete_ans == "Y" ]]; then
@@ -19,7 +16,7 @@ if [[ $delete_ans == "Y" ]]; then
 
     if [[ ! -d ./databaes/ ]]; then 
         mkdir ./databases/
-        chown -R "$user_id:$group_id" ./databases/
+        chown -R "1000:1000" ./databases/
         chmod -R 755 ./databases/
     fi;
 else
