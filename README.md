@@ -192,10 +192,16 @@ Please don't send pull requests before signing the Contributor License Agreement
 
 ## Docker image exporting/importing
 
--  Running ./export_images.sh "libiec61850:20210416-v1.0" to export Dokcer image with 20210416-v1.0 tag.
-- Running ./import_images.sh libiec61850-20210416-v1.0.tar.gz to import specific archived Docker image file. 
+- Running `./export_images.sh "libiec61850:20210416-v1.0"` to export Dokcer image with 20210416-v1.0 tag.
+- Running `./import_images.sh libiec61850-20210416-v1.0.tar.gz` to import specific archived Docker image file.
 
-## Running IEC-61850 client/server
+## Running IEC-61850 MMS client/server
 
 - Running `./run_61850_server.sh no_tls latest 8102` to run non-tls server, latest tag and listen on `8102` port.
-- Running `./test_server.sh no_tls` to run non-tls client.
+
+## Interacting IEC-61850 MMS server via MMS client
+
+- Running `./inverter_info.sh no_tls 127.0.0.1` to check inverter information.
+- Running `./inverter_status_loop.sh no_tls 127.0.0.1` to check inverter status.
+- Running `./inverter_set.sh no_tls 127.0.0.1 inverter_on` to turn on the inverter.
+- Running `./inverter_set.sh no_tls 127.0.0.1 inverter_off` to turn off the inverter.
