@@ -192,7 +192,7 @@ Please don't send pull requests before signing the Contributor License Agreement
 
 ## Docker image exporting/importing
 
--  Running `./export_images.sh "libiec61850:20210416-v1.0"` to export Dokcer image with 20210416-v1.0 tag.
+- Running `./export_images.sh "libiec61850:20210416-v1.0"` to export Dokcer image with 20210416-v1.0 tag.
 - Running `./import_images.sh libiec61850-20210416-v1.0.tar.gz` to import specific archived Docker image file.
 
 ## Running IEC-61850 MMS client/server
