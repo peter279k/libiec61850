@@ -14,10 +14,14 @@ if [[ $delete_ans == "Y" ]]; then
     echo -e "${yellow_color}The databases folder will be deleted.${rest_color}"
     rm -rf ./databases/
 
-    if [[ ! -d ./databaes/ ]]; then 
+    if [[ ! -d ./databaes/ ]]; then
+        if [[ $USER != 'root'  ]]; then
+            sudo_prefix="sudo "
+        fi;
+
         mkdir ./databases/
-        chown -R "1000:1000" ./databases/
-        chmod -R 755 ./databases/
+        ${sudo_prefix}chown -R "1000:1000" ./databases/
+        ${sudo_prefix}chmod -R 755 ./databases/
     fi;
 else
     echo -e "${yellow_color}The databases folder will keep existed.${rest_color}"
