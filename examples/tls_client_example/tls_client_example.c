@@ -4,6 +4,8 @@
  * This example shows how to configure TLS
  */
 
+#define _GNU_SOURCE
+
 #include "iec61850_client.h"
 
 #include <stdlib.h>
