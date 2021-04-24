@@ -26,7 +26,7 @@ RUN apt-get update \
 && export DEBIAN_FRONTEND="" \
 # Clone libiec61850 repository
 && git config --global http.sslVerify false \
-&& git clone https://github.com/peter279k/libiec61850.git \
+&& git clone https://github.com/peter279k/libiec61850.git --branch fix_asprintf_warning \
 # Download mbedtls
 && wget --no-check-certificate https://tls.mbed.org/download/mbedtls-2.16.0-apache.tgz \
 && wget --no-check-certificate https://www.sqlite.org/2021/sqlite-amalgamation-3340100.zip \
