@@ -29,7 +29,7 @@ static MmsDataAccessError
 writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnection connection, void* parameter)
 {
     if (dataAttribute == IEDMODEL_GenericIO_GGIO1_NamPlt_vendor) {
-        char* newValue = MmsValue_toString(value);
+        const char* newValue = MmsValue_toString(value);
         printf("New value for OutVarSet_setMag_f = %s\n", newValue);
         return DATA_ACCESS_ERROR_SUCCESS;
     }
