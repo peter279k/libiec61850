@@ -44,8 +44,8 @@ int create_sqlite3_table() {
         return 1;
     }
 
-    char *sql = "CREATE TABLE IF NOT EXISTS reading_value(id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT, date_time TEXT);"
-                "CREATE TABLE IF NOT EXISTS writing_data_attribute(id INTEGER PRIMARY KEY AUTOINCREMENT, attribute TEXT, date_time TEXT);";
+    char *sql = "CREATE TABLE IF NOT EXISTS inverter_info(id INTEGER PRIMARY KEY AUTOINCREMENT, watt TEXT, volt TEXT, electric TEXT, measured_date_time TEXT);"
+                "CREATE TABLE IF NOT EXISTS writing_attribute_log(id INTEGER PRIMARY KEY AUTOINCREMENT, attribute TEXT, created_date_time TEXT);";
     rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", err_msg);
@@ -59,7 +59,7 @@ int create_sqlite3_table() {
     return 0;
 }
 
-int insert_reading_value(char *insert_reading_sql) {
+int insert_inverter_value(char *insert_reading_sql) {
     sqlite3 *db;
     char *err_msg = 0;
     int rc = sqlite3_open_v2("/home/iec61850/databases/tls_libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
@@ -115,6 +115,9 @@ char* get_current_datetime() {
     struct tm *local = localtime(&now);
     hours = local->tm_hour;
     hours = hours - 12;
+    if (hours < 0) {
+        hours += 12;
+    }
     minutes = local->tm_min;
     seconds = local->tm_sec;
 
@@ -188,22 +191,54 @@ int main(int argc, char** argv) {
         if (serverDirectory)
             LinkedList_destroy(serverDirectory);
 
-        /* read an analog measurement value from server */
+        /* read an analog measurement watt value from server */
         MmsValue* value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn1.mag.f", IEC61850_FC_MX);
 
+        char watt_fval_str[100];
+        char volt_fval_str[100];
+        char electric_fval_str[100];
+
+
         if (value != NULL) {
-            float fval = MmsValue_toFloat(value);
-            printf("read float value: %f\n", fval);
+            float watt_val = MmsValue_toFloat(value);
+            printf("read watt float value: %0.1f\n", watt_val);
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
 
-            char *insert_reading_sql;
-            char fval_str[100];
-            gcvt(fval, 6, fval_str);
-            asprintf(&insert_reading_sql, "INSERT INTO reading_value(value, date_time) VALUES('%s', '%s');", fval_str, get_current_datetime());
-            insert_reading_value(insert_reading_sql);
+            gcvt(watt_val, 6, watt_fval_str);
             MmsValue_delete(value);
         }
+ 
+        /* read an analog measurement volt value from server */
+        value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn2.mag.f", IEC61850_FC_MX);
+
+        if (value != NULL) {
+            float volt_val = MmsValue_toFloat(value);
+            printf("read volt float value: %0.1f\n", volt_val);
+            printf("Try to store reading value...\n");
+            printf("Today Date time is: %s\n", get_current_datetime());
+
+            gcvt(volt_val, 6, volt_fval_str);
+            MmsValue_delete(value);
+        }
+
+        /* read an analog measurement electric value from server */
+        value = IedConnection_readObject(con, &error, "simpleIOGenericIO/GGIO1.AnIn3.mag.f", IEC61850_FC_MX);
+
+        if (value != NULL) {
+            float electric_val = MmsValue_toFloat(value);
+            printf("read electric float value: %0.1f\n", electric_val);
+            printf("Try to store reading value...\n");
+            printf("Today Date time is: %s\n", get_current_datetime());
+
+            gcvt(electric_val, 6, electric_fval_str);
+            MmsValue_delete(value);
+        }
+
+        /* Insert watt, volt and electric values to inverter_info */
+        char *insert_reading_sql;
+        asprintf(&insert_reading_sql, "INSERT INTO inverter_info(watt, volt, electric, measured_date_time) VALUES('%s', '%s', '%s', '%s');", watt_fval_str, volt_fval_str, electric_fval_str, get_current_datetime());
+        insert_inverter_value(insert_reading_sql);
 
         /* write a variable to the server */
         value = MmsValue_newVisibleString(attribute_string);
@@ -216,7 +251,7 @@ int main(int argc, char** argv) {
             printf("Writing data attribute to server has been successful!\n");
             printf("Trying to insert data attribute to SQLite writing_data_attribute table...\n");
             char *insert_attr_sql;
-            asprintf(&insert_attr_sql, "INSERT INTO writing_data_attribute(attribute, date_time) VALUES('%s', '%s');", attribute_string, get_current_datetime());
+            asprintf(&insert_attr_sql, "INSERT INTO writing_attribute_log(attribute, created_date_time) VALUES('%s', '%s');", attribute_string, get_current_datetime());
             insert_writing_attr(insert_attr_sql);
         }
 
