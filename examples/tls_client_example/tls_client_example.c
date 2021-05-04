@@ -201,7 +201,7 @@ int main(int argc, char** argv) {
 
         if (value != NULL) {
             float watt_val = MmsValue_toFloat(value);
-            printf("read watt float value: %f\n", watt_val);
+            printf("read watt float value: %f\n", (double)watt_val);
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
 
@@ -214,7 +214,7 @@ int main(int argc, char** argv) {
 
         if (value != NULL) {
             float volt_val = MmsValue_toFloat(value);
-            printf("read volt float value: %f\n", volt_val);
+            printf("read volt float value: %f\n", (double)volt_val);
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
 
@@ -227,7 +227,7 @@ int main(int argc, char** argv) {
 
         if (value != NULL) {
             float electric_val = MmsValue_toFloat(value);
-            printf("read electric float value: %f\n", electric_val);
+            printf("read electric float value: %f\n", (double)electric_val);
             printf("Try to store reading value...\n");
             printf("Today Date time is: %s\n", get_current_datetime());
 
