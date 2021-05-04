@@ -44,8 +44,8 @@ int create_sqlite3_table() {
         return 1;
     }
 
-    char *sql = "CREATE TABLE IF NOT EXISTS reading_value(id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT, date_time TEXT);"
-                "CREATE TABLE IF NOT EXISTS writing_data_attribute(id INTEGER PRIMARY KEY AUTOINCREMENT, attribute TEXT, date_time TEXT);";
+    char *sql = "CREATE TABLE IF NOT EXISTS inverter_info(id INTEGER PRIMARY KEY AUTOINCREMENT, watt TEXT, volt TEXT, electric TEXT, measured_date_time TEXT);"
+                "CREATE TABLE IF NOT EXISTS writing_attribute_log(id INTEGER PRIMARY KEY AUTOINCREMENT, attribute TEXT, created_date_time TEXT);";
     rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", err_msg);
