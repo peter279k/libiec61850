@@ -251,7 +251,7 @@ int main(int argc, char** argv) {
             printf("Writing data attribute to server has been successful!\n");
             printf("Trying to insert data attribute to SQLite writing_data_attribute table...\n");
             char *insert_attr_sql;
-            asprintf(&insert_attr_sql, "INSERT INTO writing_data_attribute(attribute, date_time) VALUES('%s', '%s');", attribute_string, get_current_datetime());
+            asprintf(&insert_attr_sql, "INSERT INTO writing_attribute_log(attribute, created_date_time) VALUES('%s', '%s');", attribute_string, get_current_datetime());
             insert_writing_attr(insert_attr_sql);
         }
 
