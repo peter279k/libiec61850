@@ -59,7 +59,7 @@ int create_sqlite3_table() {
     return 0;
 }
 
-int insert_reading_value(char *insert_reading_sql) {
+int insert_inverter_value(char *insert_reading_sql) {
     sqlite3 *db;
     char *err_msg = 0;
     int rc = sqlite3_open_v2("/home/iec61850/databases/tls_libiec61850.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
