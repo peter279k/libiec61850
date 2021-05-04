@@ -17,7 +17,7 @@ find_package(CURL)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 find_package(JSON-C)
 
-add_executable(no_tls_server_example
+add_executable(tls_server_example
   ${example_SRCS}
 )
 
