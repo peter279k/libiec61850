@@ -27,10 +27,6 @@ configure_file(client1.cer client1.cer COPYONLY)
 configure_file(client2.cer client2.cer COPYONLY)
 configure_file(root.cer root.cer COPYONLY)
 
-add_executable(tls_server_example
-  ${example_SRCS}
-)
-
 IF(CURL_FOUND)
     target_link_libraries(tls_server_example ${CURL_LIBRARY} iec61850)
 ELSE(CURL_FOUND)
