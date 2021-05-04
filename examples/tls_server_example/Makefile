@@ -14,6 +14,8 @@ all:	$(PROJECT_BINARY_NAME)
 include $(LIBIEC_HOME)/make/common_targets.mk
 
 LDLIBS += -lm
+LDLIBS += -lcurl
+LDLIBS += -ljson
 
 model:	$(PROJECT_ICD_FILE)
 	java -jar $(LIBIEC_HOME)/tools/model_generator/genmodel.jar $(PROJECT_ICD_FILE)
